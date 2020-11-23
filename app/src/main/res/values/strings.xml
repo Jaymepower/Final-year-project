@@ -1,3 +1,53 @@
 <resources>
-    <string name="app_name">Final Year Project</string>
+    <string-array name="genre_list">
+        <item>Pop</item>
+        <item>Rock</item>
+        <item>Electronic</item>
+        <item>Rap</item>
+        <item>Country</item>
+    </string-array>
+
+
+    <string-array name="rock_sublist">
+        <item>Hard Rock</item>
+        <item>Classic Rock</item>
+        <item>Alternative rock</item>
+        <item>Pop punk</item>
+    </string-array>
+
+<string-array name="pop_sublist">
+    <item>Charts</item>
+    <item>Synth Pop</item>
+    <item>Disco</item>
+    <item>R&amp;B</item>
+</string-array>
+
+    <string-array name="elect_sublist">
+        <item>Techno</item>
+        <item>House</item>
+        <item>Deep House</item>
+        <item>IDM</item>
+        <item>Drum and Bass</item>
+    </string-array>
+
+
+    <string-array name="rap_sublist">
+        <item>Mumble rap</item>
+        <item>Old School Hip Hop</item>
+        <item>Jazz Rap</item>
+        <item>Lo-fi Hip Hop</item>
+    </string-array>
+
+    <string-array name="country_sublist">
+        <item>Folk</item>
+        <item>Americana</item>
+        <item>Bluegrass</item>
+        <item>Blues</item>
+        <item>Modern Country</item>
+    </string-array>
+
+
+    <string-array name="empty">
+</string-array>
+
 </resources>

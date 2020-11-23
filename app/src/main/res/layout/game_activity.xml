@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bingo_button"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/game_back"
+    tools:visibility="visible">
+
+
+    <androidx.gridlayout.widget.GridLayout
+        android:layout_width="540dp"
+        android:layout_height="382dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="12dp"
+        android:background="@color/white"
+        app:columnCount="4"
+        app:columnOrderPreserved="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:rowCount="4"
+        app:useDefaultMargins="false">
+
+        <Button
+            android:id="@+id/song_1"
+            android:layout_width="135dp"
+            android:layout_height="95dp"
+            android:background="@drawable/border_button"
+            android:onClick="boxclicked"
+            android:rotationX="-2"
+            android:rotationY="2"
+            android:textAllCaps="false"
+            android:textSize="10dp"
+            app:layout_gravity="fill" />
+
+        <Button
+            android:id="@+id/song_2"
+            android:layout_width="135dp"
+            android:layout_height="95dp"
+            android:background="@drawable/border_button"
+            android:onClick="boxclicked"
+            android:textAllCaps="false"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/song_3"
+            android:layout_width="135dp"
+            android:layout_height="95dp"
+            android:background="@drawable/border_button"
+            android:onClick="boxclicked"
+            android:textAllCaps="false"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/song_4"
+            android:layout_width="135dp"
+            android:layout_height="95dp"
+            android:background="@drawable/border_button"
+            android:onClick="boxclicked"
+            android:textAllCaps="false"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/song_5"
+            android:layout_width="135dp"
+            android:layout_height="95dp"
+            android:background="@drawable/border_button"
+            android:textAllCaps="false"
+            android:onClick="boxclicked"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/song_6"
+            android:layout_width="135dp"
+            android:layout_height="95dp"
+            android:background="@drawable/border_button"
+            android:onClick="boxclicked"
+            android:textAllCaps="false"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/song_7"
+            android:layout_width="135dp"
+            android:layout_height="95dp"
+            android:background="@drawable/border_button"
+            android:onClick="boxclicked"
+            android:textAllCaps="false"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/song_8"
+            android:layout_width="135dp"
+            android:layout_height="95dp"
+            android:background="@drawable/border_button"
+            android:onClick="boxclicked"
+            android:textAllCaps="false"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/song_9"
+            android:layout_width="135dp"
+            android:layout_height="95dp"
+            android:background="@drawable/border_button"
+            android:onClick="boxclicked"
+            android:textAllCaps="false"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/song_10"
+            android:layout_width="135dp"
+            android:layout_height="95dp"
+            android:background="@drawable/border_button"
+            android:onClick="boxclicked"
+            android:textAllCaps="false"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/song_11"
+            android:layout_width="135dp"
+            android:layout_height="95dp"
+            android:background="@drawable/border_button"
+            android:onClick="boxclicked"
+            android:textAllCaps="false"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/song_12"
+            android:layout_width="135dp"
+            android:layout_height="95dp"
+            android:background="@drawable/border_button"
+            android:onClick="boxclicked"
+            android:textAllCaps="false"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/song_13"
+            android:layout_width="135dp"
+            android:layout_height="95dp"
+            android:background="@drawable/border_button"
+            android:onClick="boxclicked"
+            android:textAllCaps="false"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/song_14"
+            android:layout_width="135dp"
+            android:layout_height="95dp"
+            android:background="@drawable/border_button"
+            android:onClick="boxclicked"
+            android:textAllCaps="false"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/song_15"
+            android:layout_width="135dp"
+            android:layout_height="95dp"
+            android:background="@drawable/border_button"
+            android:onClick="boxclicked"
+            android:textAllCaps="false"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/song_16"
+            android:layout_width="135dp"
+            android:layout_height="95dp"
+            android:background="@drawable/border_button"
+            android:onClick="boxclicked"
+            android:textAllCaps="false"
+            android:textSize="10dp" />
+
+
+    </androidx.gridlayout.widget.GridLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginEnd="80dp"
+        android:layout_marginBottom="48dp"
+        android:backgroundTint="@color/red"
+        android:clickable="true"
+        android:onClick="validateLines"
+        android:src="@drawable/ic_bingo_"
+        app:fabCustomSize="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:maxImageSize="70dp"
+        app:rippleColor="#8301a2" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="228dp"
+        android:layout_height="77dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/musicbingo" />
+
+    <TextView
+        android:id="@+id/now_playing"
+        android:layout_width="167dp"
+        android:layout_height="65dp"
+        android:layout_marginTop="68dp"
+        android:layout_marginEnd="33dp"
+        android:layout_marginBottom="45dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/floatingActionButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
