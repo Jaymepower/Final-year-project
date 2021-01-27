@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/gradient_backround"
+    android:background="@drawable/better_wallpaper"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,11 +12,11 @@
         android:layout_width="184dp"
         android:layout_height="57dp"
         android:layout_marginStart="50dp"
-        android:layout_marginTop="92dp"
+        android:layout_marginTop="112dp"
         android:layout_marginEnd="77dp"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.33"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,11 +26,13 @@
         android:layout_height="75dp"
         android:layout_marginStart="98dp"
         android:layout_marginEnd="98dp"
-        android:layout_marginBottom="131dp"
+        android:layout_marginBottom="76dp"
         android:background="@drawable/round_button"
-        android:drawableLeft="@drawable/plus"
-        android:text="Host Game"
+        android:drawableLeft="@drawable/ic_dj"
         android:onClick="createGame"
+        android:text="Host Game"
+        android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/join_game"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -41,10 +43,12 @@
         android:layout_height="75dp"
         android:layout_marginStart="98dp"
         android:layout_marginEnd="98dp"
-        android:layout_marginBottom="220dp"
+        android:layout_marginBottom="288dp"
         android:background="@drawable/round_button"
         android:drawableLeft="@drawable/music_note"
         android:text="Join Game"
+        android:textSize="16sp"
+        android:onClick="JoinGame"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -56,12 +60,13 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="52dp"
         android:clickable="true"
-        android:src="@drawable/ic_user_icon"
-        android:backgroundTint="#c102ee"
+        android:src="@drawable/ic_usermusic"
+        android:backgroundTint="@color/purple"
         app:fabCustomSize="80dp"
         app:maxImageSize="50dp"
+        android:onClick="profile"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:rippleColor="#8301a2" />
+        app:rippleColor="@color/purple" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

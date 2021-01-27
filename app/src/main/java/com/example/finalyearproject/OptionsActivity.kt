@@ -155,10 +155,28 @@ class OptionsActivity : AppCompatActivity() {
 
     fun createGame(v : View)
     {
-        val i : Intent = Intent(this,Hostactivity::class.java)
+        val i = Intent(this,Hostactivity::class.java)
+        i.putExtra("token", access_token)
+        i.putExtra("name",displayName)
+        startActivity(i)
+    }
+
+    fun profile(v: View)
+    {
+        val i = Intent(this,Profile::class.java)
         i.putExtra("token", access_token)
         startActivity(i)
     }
+
+    fun JoinGame(v : View)
+    {
+        val i = Intent(this,JoinActvity::class.java)
+        i.putExtra("token", access_token)
+        i.putExtra("name",displayName)
+        startActivity(i)
+    }
+
+
 
 }
 

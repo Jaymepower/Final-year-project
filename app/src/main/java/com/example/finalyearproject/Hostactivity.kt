@@ -24,7 +24,7 @@ class Hostactivity: AppCompatActivity(){
         ArrayAdapter.createFromResource(
                 this,
                 R.array.genre_list,
-                android.R.layout.simple_spinner_item
+                R.layout.spinner_item
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             genre.adapter = adapter
@@ -34,23 +34,23 @@ class Hostactivity: AppCompatActivity(){
         ArrayAdapter.createFromResource(
                 this,
                R.array.empty,
-                android.R.layout.simple_spinner_item
+                R.layout.spinner_item
         ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            adapter.setDropDownViewResource(R.layout.spinner_item)
             subgenre.adapter = adapter
         }
 
         genre.onItemSelectedListener = object :
                 AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>,
-                                        view: View, position: Int, id: Long)
+                                        view: View?, position: Int, id: Long)
             {
              if(genre.selectedItem.toString() == "Rock")
              {
                  ArrayAdapter.createFromResource(
                          this@Hostactivity,
                          R.array.rock_sublist,
-                         android.R.layout.simple_spinner_item
+                         R.layout.spinner_item
                  ).also { adapter ->
                      adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                      subgenre.adapter = adapter
@@ -61,7 +61,7 @@ class Hostactivity: AppCompatActivity(){
                  ArrayAdapter.createFromResource(
                          this@Hostactivity,
                          R.array.pop_sublist,
-                         android.R.layout.simple_spinner_item
+                         R.layout.spinner_item
                  ).also { adapter ->
                      adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                      subgenre.adapter = adapter
@@ -72,7 +72,7 @@ class Hostactivity: AppCompatActivity(){
                  ArrayAdapter.createFromResource(
                          this@Hostactivity,
                          R.array.elect_sublist,
-                         android.R.layout.simple_spinner_item
+                         R.layout.spinner_item
                  ).also { adapter ->
                      adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                      subgenre.adapter = adapter
@@ -84,7 +84,7 @@ class Hostactivity: AppCompatActivity(){
                  ArrayAdapter.createFromResource(
                          this@Hostactivity,
                          R.array.rap_sublist,
-                         android.R.layout.simple_spinner_item
+                         R.layout.spinner_item
                  ).also { adapter ->
                      adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                      subgenre.adapter = adapter
@@ -95,7 +95,7 @@ class Hostactivity: AppCompatActivity(){
                  ArrayAdapter.createFromResource(
                          this@Hostactivity,
                          R.array.country_sublist,
-                         android.R.layout.simple_spinner_item
+                         R.layout.spinner_item
                  ).also { adapter ->
                      adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                      subgenre.adapter = adapter
@@ -113,10 +113,11 @@ class Hostactivity: AppCompatActivity(){
 
         fun startGame(v: View)
         {
-            var sub : Spinner = findViewById(R.id.subgenre_spin)
-
+            val sub : Spinner = findViewById(R.id.subgenre_spin)
+            val genre : Spinner = findViewById(R.id.genre_spin)
             val i : Intent = Intent(this,Game::class.java)
-            i.putExtra("genre",sub.selectedItem.toString())
+            i.putExtra("genre",genre.selectedItem.toString())
+            i.putExtra("subgenre",sub.selectedItem.toString())
             i.putExtra("token",access_token)
             startActivity(i)
         }

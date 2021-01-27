@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/better_wallpaper"
+    >
+
+    <include
+        android:id="@+id/llProgressBar"
+        android:visibility="gone"
+        layout="@layout/loading_layout"/>
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_pic"
+        android:layout_width="205dp"
+        android:layout_height="154dp"
+        android:layout_marginStart="103dp"
+        android:layout_marginTop="78dp"
+        android:layout_marginEnd="103dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </de.hdodenhof.circleimageview.CircleImageView>
+
+    <TextView
+        android:id="@+id/name_header"
+        android:layout_width="125dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginTop="78dp"
+        android:text="Name"
+        android:textColor="@color/purple"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_pic" />
+
+    <TextView
+        android:id="@+id/name_header2"
+        android:layout_width="125dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginTop="20dp"
+        android:text="Email"
+        android:textColor="@color/purple"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_name" />
+
+    <TextView
+        android:id="@+id/name_header3"
+        android:layout_width="125dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginTop="23dp"
+        android:text="Country"
+        android:textColor="@color/purple"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_email" />
+
+    <TextView
+        android:id="@+id/name_header4"
+        android:layout_width="140dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginTop="13dp"
+        android:text="Followers"
+        android:textColor="@color/purple"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_country" />
+
+    <TextView
+        android:id="@+id/profile_name"
+        android:layout_width="317dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginTop="10dp"
+        android:textSize="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_header" />
+
+    <TextView
+        android:id="@+id/profile_email"
+        android:layout_width="317dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginTop="10dp"
+        android:textSize="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_header2" />
+
+    <TextView
+        android:id="@+id/profile_country"
+        android:layout_width="317dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginTop="10dp"
+        android:textSize="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_header3" />
+
+    <TextView
+        android:id="@+id/profile_followers"
+        android:layout_width="317dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginTop="10dp"
+        android:textSize="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_header4" />
+</androidx.constraintlayout.widget.ConstraintLayout>

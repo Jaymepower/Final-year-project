@@ -5,14 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_backround"
+    android:background="@drawable/better_wallpaper"
     >
 
     <Spinner
         android:id="@+id/subgenre_spin"
         android:layout_width="242dp"
         android:layout_height="84dp"
-        android:layout_marginTop="142dp"
+        android:layout_marginTop="116dp"
         android:layout_marginEnd="68dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/genre_spin" />
