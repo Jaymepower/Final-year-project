@@ -24,19 +24,18 @@ import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.*
+import java.lang.Exception
 import java.net.ServerSocket
 import java.net.Socket
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.ThreadPoolExecutor
 import javax.net.ssl.HttpsURLConnection
+import kotlin.concurrent.thread
 
 
 class Game : AppCompatActivity() {
@@ -45,6 +44,8 @@ class Game : AppCompatActivity() {
             val REDIRECT_URI: String = "com.example.finalyearproject://MainActivity/"
             val CLIENT_ID: String = "6573a6cbc21f424fad81067b6ce53fd0"
             val playlist: String = "https://api.spotify.com/v1/playlists/15QCkUofmu6Gga9saOhENp/"
+            var song_index = 2
+            var next : Boolean = false
             var ONE_LINE: Boolean = false
             var TWO_LINES: Boolean = false
             var FULL_HOUSE: Boolean = false
@@ -134,7 +135,7 @@ class Game : AppCompatActivity() {
 
                 if (genre != null) {
 
-                    genre_ref.addValueEventListener(object : ValueEventListener { //ordinary event listener will be kept running
+                    genre_ref.addValueEventListener(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot)
                         {
 
@@ -172,6 +173,10 @@ class Game : AppCompatActivity() {
 
 
                 }
+                else
+                {
+                    Toast.makeText(this,"Playlist Failed to load",Toast.LENGTH_LONG).show()
+                }
 
 
 
@@ -191,68 +196,48 @@ class Game : AppCompatActivity() {
                     httpsURLConnection.setRequestProperty("Authorization", "Bearer " + token)
                     httpsURLConnection.doInput = true
                     httpsURLConnection.doOutput = false
-
                     // Response returned from request , we use a bufferedReader to read the return
                     val response = httpsURLConnection.inputStream.bufferedReader()
                             .use { it.readText() }
                     withContext(Dispatchers.Main) {
                         val jsonObject = JSONObject(response) // Playlist
-
-
                         var name = jsonObject.getString("name")// Name of playlist
-
                         var page = jsonObject.getJSONObject("tracks")//Pager object
-
                         var song = page.getJSONArray("items")//Items array inside of pager object
-
                         Log.i("Spotify API", name.toString())
                         Log.i("Spotify API", page.toString())
                         Log.i("Spotify API", song.toString())
-
                         for (i in 0 until song.length()) {
                             val item = song.getJSONObject(i)
-
                             // Iterating the playlist for each track
-                            var track = item.getJSONObject("track")
-
-                            // name of song
-                            var name = track.getString("name")
-                            // Artist on song
+                            var track = item.getJSONObject("track") // name of song
+                            var name = track.getString("name") // Artist on song
                             var art_list = track.getJSONArray("artists")
                             var artist = art_list.getJSONObject(0)
                             var art_name = artist.getString("name")
-                            // URI for streaming
-                            var uri = track.getString("uri")
-                            // 30 second spotify preview
-                            var preview = track.getString("preview_url")
-
-                            // Album Object
-                            var album = track.getJSONObject("album")
+                            var uri = track.getString("uri") // URI for streaming
+                            var preview = track.getString("preview_url")     // 30 second spotify preview
+                            var album = track.getJSONObject("album") // Album Object
                             var images = album.getJSONArray("images")
                              val image = images[0] as JSONObject
                              val image_url = image.getString("url")
-
-
                             Log.i("Track", album.toString())
                             Log.i("Image", images[0].toString())
                             Log.i("Image URL",image_url)
-
-
 
                             if (preview != "null") {
                                 // Mapping JSON data to a kotlin object
                                 songs.add(Song(name, art_name, uri, preview,image_url))
                             }
-
                             Log.i("Spotify API", name)
                             Log.i("Spotify API", preview)
-
                         }
                         Log.i("Spotify API", songs.toString())
 
 
 
-                        connect()
+                        //connect()
+                        handleClient()
 
 
                     }
@@ -396,7 +381,7 @@ class Game : AppCompatActivity() {
             }
 
             private fun generateCard() {
-                songs.shuffle()
+                //songs.shuffle()
                 song1.setText(songs[0].name)
                 song2.setText(songs[1].name)
                 song3.setText(songs[2].name)
@@ -447,7 +432,15 @@ class Game : AppCompatActivity() {
                                 Picasso.get()
                                         .load(image)
                                         .into(album_cover)
+
                             }
+
+
+                            song_index ++
+                            Log.i("Server loading song...", next.toString())
+                            delay(10000)
+                            next = true
+
 
                         }
 
@@ -462,10 +455,9 @@ class Game : AppCompatActivity() {
                             setDataSource(url)
                             prepare() // might take long! (for buffering)
                             //start()
-                            val json_song = Gson().toJson(song)
-                            Log.i("JSON Song", json_song.toString())
+
                             // 30 second wait in between songs
-                            Thread.sleep(10000)
+
 
                         }
 
@@ -615,25 +607,61 @@ class Game : AppCompatActivity() {
                 }
             }
 
-            fun connect()
+               fun handleClient()
+               {
+
+                   GlobalScope.launch(Dispatchers.IO) {
+                       var user_count = 0
+                       val users = ArrayList<Socket>()
+                       val server = ServerSocket(6000)
+                       Log.i("Server","Listening on ${server.localPort}")
+                       while(user_count < 1)
+                       {
+                           val sock = server.accept()
+                           users.add(sock)
+                           user_count ++
+
+                       }
+                       for(i in users)
+                       {
+                           val thread = thread(start = true) { connect(i) }
+                       }
+                   }
+               }
+
+            fun connect(client : Socket)
             {
-                val j_song = Gson().toJson(songs)
-                Log.i("JSON LIST", j_song.toString())
+                GlobalScope.launch(Dispatchers.IO) {
 
-
-                GlobalScope.launch {
-                    val server = ServerSocket(6000)
-                    Log.i("Server","Opening Connection on ${server.localPort}")
-                    val client = server.accept()
                     Log.i("Server","Client Connected")
-                    output = PrintWriter(client.getOutputStream(), true)
+                    val output = PrintWriter(client.getOutputStream(), true)
                     var input = BufferedReader(InputStreamReader(client.inputStream))
-
-
+                    val j_song = Gson().toJson(songs)
+                    Log.i("JSON LIST", j_song.toString())
                     output.println(j_song.toString())
 
-                    // songs.shuffle()
+                    val first = Gson().toJson(songs[0])
+                    output.println(first.toString())
+                    playsong(songs[0])
 
+                    songs.shuffle()
+                    while(true)
+                    {
+                        var status = "Hello Client"
+                        if(next)
+                        {
+                            next = false
+                            val n_song = Gson().toJson(songs[song_index])
+                            status = "SONG" + n_song.toString()
+                            playsong(songs[song_index])
+                        }
+                        output.println(status)
+                        val back = input.readLine()
+                        Log.i("Server (from Client)",back)
+                    }
+
+
+                    /*
                     for(i in songs)
                     {
                         val send_song = Gson().toJson(i)
@@ -656,16 +684,13 @@ class Game : AppCompatActivity() {
                         output.println("NO_CHANGE")
                         Log.i("Server", status)
 
-                    }
+                    }*/
 
                 }
 
             }
 
-            fun handleClient()
-            {
 
-            }
 
 
             fun showpopup(v : View)

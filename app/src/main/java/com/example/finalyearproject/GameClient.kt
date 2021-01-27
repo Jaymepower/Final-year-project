@@ -20,6 +20,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.squareup.picasso.Picasso
 import com.yarolegovich.lovelydialog.LovelyStandardDialog
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.json.JSONArray
@@ -135,62 +136,64 @@ class GameClient : AppCompatActivity()
 
     }
 
- // ONLY 5556 CAN HOST
     fun connect()
     {
-
         Log.i("Client","Client Opening Socket")
-        GlobalScope.launch {
+        GlobalScope.launch (Dispatchers.IO){
             socket = Socket("10.0.2.2", 5000)
-            output = PrintWriter(socket.getOutputStream(), true)
-            input = BufferedReader(InputStreamReader(socket.getInputStream()))
+            val output = PrintWriter(socket.getOutputStream(), true)
+            val input = BufferedReader(InputStreamReader(socket.getInputStream()))
             Log.i("Client Connected", "Connected to Server ${socket.inetAddress.hostAddress}")
             val mes = input.readLine()
             Log.i("Client", mes)
-
             val songs = JSONArray(mes)
             Log.i("Client (JSON LIST)", songs.toString())
 
             for (i in 0 until songs.length()) {
                 val item = songs.getJSONObject(i)
                 Log.i("Client", item.toString())
-
                 val album_url = item.getString("album_url")
                 val artists = item.getString("artists")
                 val name = item.getString("name")
                 val preview_url = item.getString("preview_url")
                 val song_uri = item.getString("song_uri")
-
-
                 song_list.add(Song(name,artists,song_uri,preview_url,album_url))
 
             }
             generateCard(song_list)
-
-            var server_song : String
+            val first = input.readLine()
+            val item = JSONObject(first)
+            val album_url = item.getString("album_url")
+            val artists = item.getString("artists")
+            val name = item.getString("name")
+            val preview_url = item.getString("preview_url")
+            val song_uri = item.getString("song_uri")
+            play_song(Song(name,artists,song_uri,preview_url,album_url))
             while(true)
             {
 
-                 server_song = input.readLine()
-                 output.println(status)
+                val mes = input.readLine()
+                if(mes.toString().startsWith("SONG"))
+                {
+                    Log.i("Client", "Processing song")
+
+                    val song = mes.substring(4,mes.length)
+                    val n_item = JSONObject(song)
+                    val n_album_url = n_item.getString("album_url")
+                    val n_artists = n_item.getString("artists")
+                    val n_name = n_item.getString("name")
+                    val n_preview_url = n_item.getString("preview_url")
+                    val n_song_uri = n_item.getString("song_uri")
+
+                    play_song(Song(n_name,n_artists,n_song_uri,n_preview_url,n_album_url))
 
 
-
-                Log.i("Client",server_song.toString())
-                val j_song = JSONObject(server_song)
-
-                val s_album_url = j_song.getString("album_url")
-                val s_artist = j_song.getString("artists")
-                val s_name = j_song.getString("name")
-                val s_preview = j_song.getString("preview_url")
-                val s_song_uri = j_song.getString("song_uri")
-
-                val current_song = Song(s_name,s_artist,s_song_uri,s_preview,s_album_url)
-                play_song(current_song)
-                val change = input.readLine()
-                Log.i("Client",change)
-
+                }
+                Log.i("Client", mes)
+                output.println("Song Recieved")
             }
+
+
 
 
 
@@ -372,6 +375,7 @@ class GameClient : AppCompatActivity()
 
 
     fun validateLines(v: View) {
+        victory.show()
         Log.i("FAB", "clicked")
         if (!ONE_LINE) {
             if ((song1_click && song2_click && song3_click && song4_click) || (song5_click && song6_click && song7_click && song8_click)
