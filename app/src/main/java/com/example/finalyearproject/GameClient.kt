@@ -1,23 +1,27 @@
 package com.example.finalyearproject
 
+import android.annotation.SuppressLint
+import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
-import android.media.AudioAttributes
+import android.content.SharedPreferences
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.view.Window
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.andremion.counterfab.CounterFab
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.database.*
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 import com.squareup.picasso.Picasso
 import com.yarolegovich.lovelydialog.LovelyStandardDialog
 import kotlinx.coroutines.Dispatchers
@@ -29,39 +33,32 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.PrintWriter
-import java.net.ServerSocket
 import java.net.Socket
 import java.util.*
-import java.util.logging.SocketHandler
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class GameClient : AppCompatActivity()
 {
+    var mONE_LINE: Boolean = false
+    var mTWO_LINES: Boolean = false
+    var mFULL_HOUSE: Boolean = false
     var ONE_LINE: Boolean = false
     var TWO_LINES: Boolean = false
     var FULL_HOUSE: Boolean = false
+    var playing = false
+    var score = 0
+    var noLines = 0
     var status : String = "SONG RECIEVED"
-    var one_line_status : String = "One Line : -:-"
-    var two_line_status : String = "Two Lines : -:- "
-    var full_house_status : String = "Full house : -:-"
-    lateinit var name : String
+    var one_line_status : String = ""
+    var two_line_status : String = ""
+    var full_house_status : String = ""
+    lateinit var username : String
+    var react_content = ""
+    lateinit var react_button : CounterFab
+    lateinit var messageButton : CounterFab
+    lateinit var preferences: SharedPreferences
 
-    var song1_click: Boolean = false;
-    var song2_click: Boolean = false;
-    var song3_click: Boolean = false
-    var song4_click: Boolean = false;
-    var song5_click: Boolean = false;
-    var song6_click: Boolean = false
-    var song7_click: Boolean = false;
-    var song8_click: Boolean = false;
-    var song9_click: Boolean = false
-    var song10_click: Boolean = false;
-    var song11_click: Boolean = false;
-    var song12_click: Boolean = false
-    var song13_click: Boolean = false;
-    var song14_click: Boolean = false;
-    var song15_click: Boolean = false
-    var song16_click: Boolean = false
 
     lateinit var song1: Button;
     lateinit var song2: Button;
@@ -82,11 +79,17 @@ class GameClient : AppCompatActivity()
     lateinit var now_playing: TextView
     lateinit var album_cover : ImageView
     lateinit var leaderboard : FloatingActionButton
+    lateinit var card : Card
+
     lateinit var lines : AlertDialog
     lateinit var victory : LovelyStandardDialog
+    lateinit var played : AlertDialog.Builder
+    lateinit var chatDialog: ChatDialog
+    lateinit var user_ref : DatabaseReference
 
     private lateinit var song_list: ArrayList<Song>
     private lateinit var played_songs : ArrayList<String>
+    private lateinit var reactions : HashMap<String,String>
 
     lateinit var socket : Socket
     lateinit var input : BufferedReader
@@ -98,19 +101,24 @@ class GameClient : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.game_activity)
 
-        name = intent.getStringExtra("name").toString()
+        //username = intent.getStringExtra("name").toString()
+        username = "Other user"
 
         lines = AlertDialog.Builder(this,R.style.AlertDialogStyle).create()
         album_cover = findViewById(R.id.album_cover)
         now_playing = findViewById(R.id.now_playing)
         song_list = ArrayList<Song>()
         played_songs = ArrayList<String>()
+        reactions = HashMap<String,String>()
+        react_button = findViewById(R.id.reaction_button)
+        messageButton = findViewById(R.id.chat_button)
+        react_button.count = 0
 
+        chatDialog = ChatDialog()
         leaderboard = findViewById(R.id.popup_button)
-
         leaderboard.setOnClickListener{
             lines.setTitle("Leaderboard")
-            lines.setMessage(one_line_status + "\n" + two_line_status + "\n" + full_house_status)
+            lines.setMessage("First Line : "+ one_line_status + "\n"+"Two Lines : "+ two_line_status + "\n" + "Full house : " + full_house_status)
             lines.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", DialogInterface.OnClickListener { dialog, which -> lines.dismiss() })
             lines.show()
         }
@@ -126,6 +134,25 @@ class GameClient : AppCompatActivity()
                     victory.dismiss()
                 })
 
+        played = AlertDialog.Builder(this,R.style.AlertDialogStyle)
+        played.setTitle("Played Songs")
+
+        album_cover.setOnClickListener {
+
+            var sns = Array<String>(played_songs.size){ "it = $it" } ; var i = 0
+            for (x in played_songs)
+            {
+                sns.set(i,x)
+                i ++
+            }
+            played.setItems(sns,DialogInterface.OnClickListener { dialog, which ->  })
+            val d = played.create()
+            d.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",DialogInterface.OnClickListener { dialog,
+                                                                                           which -> d.dismiss() })
+            d.show()
+        }
+        card = Card(this,this@GameClient)
+
         connect()
 
         song1 = findViewById(R.id.song_1);song2 = findViewById(R.id.song_2);song3 = findViewById(R.id.song_3);song4 = findViewById(R.id.song_4); song5 = findViewById(R.id.song_5); song6 = findViewById(R.id.song_6)
@@ -140,59 +167,197 @@ class GameClient : AppCompatActivity()
     {
         Log.i("Client","Client Opening Socket")
         GlobalScope.launch (Dispatchers.IO){
-            socket = Socket("10.0.2.2", 5000)
-            val output = PrintWriter(socket.getOutputStream(), true)
-            val input = BufferedReader(InputStreamReader(socket.getInputStream()))
-            Log.i("Client Connected", "Connected to Server ${socket.inetAddress.hostAddress}")
-            val mes = input.readLine()
-            Log.i("Client", mes)
-            val songs = JSONArray(mes)
-            Log.i("Client (JSON LIST)", songs.toString())
-
-            for (i in 0 until songs.length()) {
-                val item = songs.getJSONObject(i)
-                Log.i("Client", item.toString())
-                val album_url = item.getString("album_url")
-                val artists = item.getString("artists")
-                val name = item.getString("name")
-                val preview_url = item.getString("preview_url")
-                val song_uri = item.getString("song_uri")
-                song_list.add(Song(name,artists,song_uri,preview_url,album_url))
-
-            }
-            generateCard(song_list)
-            val first = input.readLine()
-            val item = JSONObject(first)
-            val album_url = item.getString("album_url")
-            val artists = item.getString("artists")
-            val name = item.getString("name")
-            val preview_url = item.getString("preview_url")
-            val song_uri = item.getString("song_uri")
-            play_song(Song(name,artists,song_uri,preview_url,album_url))
-            while(true)
-            {
-
-                val mes = input.readLine()
-                if(mes.toString().startsWith("SONG"))
+                socket = Socket("10.0.2.2", 5000)
+                playing = true
+                output = PrintWriter(socket.getOutputStream(), true)
+                input = BufferedReader(InputStreamReader(socket.getInputStream()))
+                Log.i("Client Connected", "Connected to Server ${socket.inetAddress.hostAddress}")
+                //output.println(username) // Send name to server
+                val mes = input.readLine() ////////////////////////
+                if(mes != null)
                 {
-                    Log.i("Client", "Processing song")
+                    val songs = JSONArray(mes)
 
-                    val song = mes.substring(4,mes.length)
-                    val n_item = JSONObject(song)
-                    val n_album_url = n_item.getString("album_url")
-                    val n_artists = n_item.getString("artists")
-                    val n_name = n_item.getString("name")
-                    val n_preview_url = n_item.getString("preview_url")
-                    val n_song_uri = n_item.getString("song_uri")
+                    for (i in 0 until songs.length()) {
+                        val item = songs.getJSONObject(i)
+                        Log.i("Client", item.toString())
+                        val album_url = item.getString("album_url")
+                        val artists = item.getString("artists")
+                        val name = item.getString("name")
+                        val preview_url = item.getString("preview_url")
+                        val song_uri = item.getString("song_uri")
+                        song_list.add(Song(name,artists,song_uri,preview_url,album_url))
 
-                    play_song(Song(n_name,n_artists,n_song_uri,n_preview_url,n_album_url))
+                    }
+                    card.printCardbySong(song_list)
+                }
+
+
+                var status = "Hello Server"
+                while(true)
+                {
+                    val mes = input.readLine() ///////////////////////////////////
+
+                    if(mes != null)
+                    {
+                        if(mes.startsWith("SONG"))
+                        {
+                            Log.i("Client", "Processing song")
+                            val song = mes.substring(4,mes.length)
+                            val n_item = JSONObject(song)
+                            val n_album_url = n_item.getString("album_url")
+                            val n_artists = n_item.getString("artists")
+                            val n_name = n_item.getString("name")
+                            val n_preview_url = n_item.getString("preview_url")
+                            val n_song_uri = n_item.getString("song_uri")
+
+                            play_song(Song(n_name,n_artists,n_song_uri,n_preview_url,n_album_url))
+                            Log.i("Client", mes)
+                        }
+
+
+                    }
+
+                    var change = input.readLine() ///////////////////////////
+                    if(change != null)
+                    {
+                        if (change.startsWith("ONE"))
+                        {
+                            ONE_LINE = true
+                            var n_line = change.substring(3,change.length)
+                            one_line_status = n_line
+                        }
+                        else if(change.startsWith("TWO"))
+                        {
+                            TWO_LINES = true
+                            var n_line = change.substring(3,change.length)
+                            two_line_status = n_line
+                        }
+                        else if(change.startsWith("FULL"))
+                        {
+                            FULL_HOUSE = true
+                            var n_line = change.substring(3,change.length)
+                            full_house_status = n_line
+                        }
+
+
+                    }
+
+                    if(mONE_LINE)
+                    {
+                        status = "ONE$username"
+                    }
+
+                    if(mTWO_LINES)
+                    {
+                        status = "TWO$username"
+                    }
+
+                    if(mFULL_HOUSE)
+                    {
+                        status = "FULL$username"
+                    }
+
+                    output.println(status)/////////////////////////
+                    status = "NO_CHANGE"
+
+                    if( mes == "CLOSE" )
+                    {
+                        Log.i("Client",mes)
+                        break
+                    }
+                    val react = input.readLine()
+                    if(react != null && !react.isEmpty() )
+                    {
+                        val s_react = react.split("+")
+                        when(s_react[1])
+                        {
+                            "HAPPY" -> {
+                                if(!reactions.get(s_react[0]).equals("Loves"))
+                                {
+                                    runOnUiThread {react_button.increase()  }
+                                }
+                                reactions.put(s_react[0], "Loves")
+                            }
+                            "BORED" -> {
+                                if(!reactions.get(s_react[0]).equals("Hates"))
+                                {
+                                    runOnUiThread {react_button.increase()  }
+                                }
+                                reactions.put(s_react[0],"Hates")
+                            }
+                        }
+                    }
+
+                    output.println(react_content)
+
+
+
+                    val messagesString = input.readLine()
+                    if(messagesString != "")
+                    {
+                        val message = Gson().fromJson(messagesString,Message::class.java)
+                        if (!chatDialog.messages.contains(message))
+                        {
+                            runOnUiThread { messageButton.increase()
+                             chatDialog.notifyChange()
+                            }
+                            chatDialog.messages.add(message)
+
+                        }
+                    }
+
+                    var last_message = ""
+                    if(chatDialog.myLog.isNotEmpty())
+                    {
+                        last_message = Gson().toJson(chatDialog.myLog[chatDialog.myLog.size-1])
+                    }
+                    output.println(last_message)
+
+
+
+
+                    //output.println()
+
 
 
                 }
-                Log.i("Client", mes)
-                output.println("Song Recieved")
+
+
+
+            try {
+                socket.close()
+                input.close()
+                output.close()
+                Log.i("Client Socket", "CLOSED")
+            }catch (e : IOException)
+            {
+                Log.i("Client Socket", "Did not close successfully")
             }
 
+            preferences = getSharedPreferences("users_id", Context.MODE_PRIVATE)
+            val id = preferences.getString("user_id","FAILED")
+            user_ref = FirebaseDatabase.getInstance().getReference("Users")
+
+            user_ref.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for(snap in snapshot.children)
+                    {
+                        val found_id : String = snap.child("user_id").value as String
+                        Log.i("ENDGAME FIREBASE",found_id)
+                        if(found_id.equals(id))
+                        {
+                            val lines  = snap.child("lines").value as Long
+                            val score  = snap.child("score").value as Long
+                            user_ref.child(snap.key.toString()).child("lines").setValue(lines + 2)
+                            user_ref.child(snap.key.toString()).child("score").setValue(score + 25)
+                        }
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+            })
 
 
 
@@ -201,35 +366,13 @@ class GameClient : AppCompatActivity()
     }
 
 
-    fun generateCard(playlist : ArrayList<Song>)
-    {
-
-        val songs = playlist
-      //  songs.shuffle()
-        song1.setText(songs[0].name)
-        song2.setText(songs[1].name)
-        song3.setText(songs[2].name)
-        song4.setText(songs[3].name)
-        song5.setText(songs[4].name)
-        song6.setText(songs[5].name)
-        song7.setText(songs[6].name)
-        song8.setText(songs[7].name)
-        song9.setText(songs[8].name)
-        song10.setText(songs[9].name)
-        song11.setText(songs[10].name)
-        song12.setText(songs[11].name)
-        song13.setText(songs[12].name)
-        song14.setText(songs[13].name)
-        song15.setText(songs[14].name)
-        song16.setText(songs[15].name)
-
-
-    }
 
     fun play_song(song : Song)
     {
         played_songs.add(song.name)
-
+        runOnUiThread { react_button.count = 0  }
+        react_content = ""
+        reactions.clear()
         now_playing.setText(song.name + "-" + song.artists)
 
         GlobalScope.launch {
@@ -240,307 +383,131 @@ class GameClient : AppCompatActivity()
                         .into(album_cover)
             }
         }
-
-
-
     }
 
+
     fun boxclicked(v: View) {
-        when (v.id) {
-            R.id.song_1 -> if (!song1_click) {
-                song1.background = resources.getDrawable(R.drawable.red_border_but, resources.newTheme())
-                song1_click = true
-            } else {
-                song1.background = resources.getDrawable(R.drawable.border_button, resources.newTheme())
-                song1_click = false
-            }
-
-            R.id.song_2 -> if (!song2_click) {
-                song2.background = resources.getDrawable(R.drawable.red_border_but, resources.newTheme())
-                song2_click = true
-            } else {
-                song2.background = resources.getDrawable(R.drawable.border_button, resources.newTheme())
-                song2_click = false
-            }
-
-            R.id.song_3 -> if (!song3_click) {
-                song3.background = resources.getDrawable(R.drawable.red_border_but, resources.newTheme())
-                song3_click = true
-            } else {
-                song3.background = resources.getDrawable(R.drawable.border_button, resources.newTheme())
-                song3_click = false
-            }
-
-            R.id.song_4 -> if (!song4_click) {
-                song4.background = resources.getDrawable(R.drawable.red_border_but, resources.newTheme())
-                song4_click = true
-            } else {
-                song4.background = resources.getDrawable(R.drawable.border_button, resources.newTheme())
-                song4_click = false
-            }
-
-            R.id.song_5 -> if (!song5_click) {
-                song5.background = resources.getDrawable(R.drawable.red_border_but, resources.newTheme())
-                song5_click = true
-            } else {
-                song5.background = resources.getDrawable(R.drawable.border_button, resources.newTheme())
-                song5_click = false
-            }
-
-            R.id.song_6 -> if (!song6_click) {
-                song6.background = resources.getDrawable(R.drawable.red_border_but, resources.newTheme())
-                song6_click = true
-            } else {
-                song6.background = resources.getDrawable(R.drawable.border_button, resources.newTheme())
-                song6_click = false
-            }
-
-            R.id.song_7 -> if (!song7_click) {
-                song7.background = resources.getDrawable(R.drawable.red_border_but, resources.newTheme())
-                song7_click = true
-            } else {
-                song7.background = resources.getDrawable(R.drawable.border_button, resources.newTheme())
-                song7_click = false
-            }
-            R.id.song_8 -> if (!song8_click) {
-                song8.background = resources.getDrawable(R.drawable.red_border_but, resources.newTheme())
-                song8_click = true
-            } else {
-                song8.background = resources.getDrawable(R.drawable.border_button, resources.newTheme())
-                song8_click = false
-            }
-
-            R.id.song_9 -> if (!song9_click) {
-                song9.background = resources.getDrawable(R.drawable.red_border_but, resources.newTheme())
-                song9_click = true
-            } else {
-                song9.background = resources.getDrawable(R.drawable.border_button, resources.newTheme())
-                song9_click = false
-            }
-
-            R.id.song_10 -> if (!song10_click) {
-                song10.background = resources.getDrawable(R.drawable.red_border_but, resources.newTheme())
-                song10_click = true
-            } else {
-                song10.background = resources.getDrawable(R.drawable.border_button, resources.newTheme())
-                song10_click = false
-            }
-
-            R.id.song_11 -> if (!song11_click) {
-                song11.background = resources.getDrawable(R.drawable.red_border_but, resources.newTheme())
-                song11_click = true
-            } else {
-                song11.background = resources.getDrawable(R.drawable.border_button, resources.newTheme())
-                song11_click = false
-            }
-
-            R.id.song_12 -> if (!song12_click) {
-                song12.background = resources.getDrawable(R.drawable.red_border_but, resources.newTheme())
-                song12_click = true
-            } else {
-                song12.background = resources.getDrawable(R.drawable.border_button, resources.newTheme())
-                song12_click = false
-            }
-            R.id.song_13 -> if (!song13_click) {
-                song13.background = resources.getDrawable(R.drawable.red_border_but, resources.newTheme())
-                song13_click = true
-            } else {
-                song13.background = resources.getDrawable(R.drawable.border_button, resources.newTheme())
-                song13_click = false
-            }
-            R.id.song_14 -> if (!song14_click) {
-                song14.background = resources.getDrawable(R.drawable.red_border_but, resources.newTheme())
-                song14_click = true
-            } else {
-                song14.background = resources.getDrawable(R.drawable.border_button, resources.newTheme())
-                song14_click = false
-            }
-            R.id.song_15 -> if (!song15_click) {
-                song15.background = resources.getDrawable(R.drawable.red_border_but, resources.newTheme())
-                song15_click = true
-            } else {
-                song15.background = resources.getDrawable(R.drawable.border_button, resources.newTheme())
-                song15_click = false
-            }
-            R.id.song_16 -> if (!song16_click) {
-                song16.background = resources.getDrawable(R.drawable.red_border_but, resources.newTheme())
-                song16_click = true
-            } else {
-                song16.background = resources.getDrawable(R.drawable.border_button, resources.newTheme())
-                song16_click = false
-            }
-
-        }
+        card.checkBox(v)
     }
 
 
     fun validateLines(v: View) {
-        victory.show()
-        Log.i("FAB", "clicked")
-        if (!ONE_LINE) {
-            if ((song1_click && song2_click && song3_click && song4_click) || (song5_click && song6_click && song7_click && song8_click)
-                    || (song9_click && song10_click && song11_click && song12_click) || (song13_click && song14_click && song15_click && song16_click)) {
-
-                if (played_songs.contains(song1.text) && played_songs.contains(song2.text)
-                        && played_songs.contains(song3.text) && played_songs.contains(song4.text)) {
-                    ONE_LINE = true
-                    Log.i("FAB", "First line!")
-                    status = "LINEONE-"+name
-                    one_line_status = "First Line : " + name
-                    victory.setMessage("Congratulations! " + name + " you have achieved the first line")
-                    victory.show()
-
-                }
-                else if(played_songs.contains(song5.text) && played_songs.contains(song6.text)
-                        && played_songs.contains(song7.text) && played_songs.contains(song8.text))
+        when(card.validateCard(played_songs))
+        {
+            "ONE" -> {
+                if(!ONE_LINE)
                 {
-                    ONE_LINE = true
-                    Log.i("FAB", "First line!")
-                    status = "LINEONE-"+name
-                    one_line_status = "First Line : " + name
-                    victory.setMessage("Congratulations! " + name + " you have achieved the first line")
+                    Log.i("Testing","works")
                     victory.show()
-                }
-                else if(played_songs.contains(song9.text) && played_songs.contains(song10.text)
-                        && played_songs.contains(song11.text) && played_songs.contains(song12.text))
-                {
                     ONE_LINE = true
-                    Log.i("FAB", "First line!")
-                    status = "LINEONE-"+name
-                    one_line_status = "First Line : " + name
-                    victory.setMessage("Congratulations! " + name + " you have achieved the first line")
-                    victory.show()
-                }
-                else if(played_songs.contains(song13.text) && played_songs.contains(song14.text)
-                        && played_songs.contains(song15.text) && played_songs.contains(song16.text))
-                {
-                    ONE_LINE = true
-                    Log.i("FAB", "First line!")
-                    status = "LINEONE-"+name
-                    one_line_status = "First Line : " + name
-                    victory.setMessage("Congratulations! " + name + " you have achieved the first line")
-                    victory.show()
-                }
-                else
-                {
-                    Log.i("FAB", "No first line unfortunately")
                 }
             }
-
-        }
-        else if(!TWO_LINES)
-        {
-            // Lines 1 and 2
-            if((song1_click && song2_click && song3_click && song4_click && song5_click && song6_click && song7_click && song8_click ))
-            {
-                if (played_songs.contains(song1.text) && played_songs.contains(song2.text) && played_songs.contains(song3.text)
-                        && played_songs.contains(song4.text) && played_songs.contains(song5.text) && played_songs.contains(song6.text)
-                        && played_songs.contains(song7.text) && played_songs.contains(song8.text))
+            "TWO" -> {
+                if(!TWO_LINES)
                 {
-                    TWO_LINES = true
-                    Log.i("FAB", "Second line!")
-                    status = "LINETWO-"+name
-                    two_line_status = "Two Lines : " + name
-                    victory.setMessage("Congratulations! " + name + " you have achieved the two lines")
+                    Log.i("Testing","works")
                     victory.show()
-                }
-            } // Lines 1 and 3
-            else if(song1_click && song2_click && song3_click && song4_click && song9_click && song10_click && song11_click && song12_click)
-            {
-                if (played_songs.contains(song1.text) && played_songs.contains(song2.text) && played_songs.contains(song3.text)
-                        && played_songs.contains(song4.text) && played_songs.contains(song9.text) && played_songs.contains(song10.text)
-                        && played_songs.contains(song11.text) && played_songs.contains(song12.text))
-                {
                     TWO_LINES = true
-                    Log.i("FAB", "Second line!")
-                    status = "LINETWO-"+name
-                    two_line_status = "Two Lines : " + name
-                }
-            } // Lines 1 and 4
-            else if(song1_click && song2_click && song3_click && song4_click && song13_click && song14_click && song15_click && song16_click)
-            {
-                if (played_songs.contains(song1.text) && played_songs.contains(song2.text) && played_songs.contains(song3.text)
-                        && played_songs.contains(song4.text) && played_songs.contains(song13.text) && played_songs.contains(song14.text)
-                        && played_songs.contains(song15.text) && played_songs.contains(song16.text))
-                {
-                    TWO_LINES = true
-                    Log.i("FAB", "Second line!")
-                    status = "LINETWO-"+name
-                    two_line_status = "Two Lines : " + name
-                }
-            }// Lines 2 and 3
-            else if(song5_click && song6_click && song7_click && song8_click && song9_click && song10_click && song11_click && song12_click)
-            {
-                if (played_songs.contains(song5.text) && played_songs.contains(song6.text) && played_songs.contains(song7.text)
-                        && played_songs.contains(song8.text) && played_songs.contains(song9.text) && played_songs.contains(song10.text)
-                        && played_songs.contains(song11.text) && played_songs.contains(song12.text))
-                {
-                    TWO_LINES = true
-                    Log.i("FAB", "Second line!")
-                    status = "LINETWO-"+name
-                    two_line_status = "Two Lines : " + name
-                }
-            } // Lines 2 and 4
-            else if(song5_click && song6_click && song7_click && song8_click && song13_click && song14_click && song15_click && song16_click)
-            {
-                if (played_songs.contains(song5.text) && played_songs.contains(song6.text) && played_songs.contains(song7.text)
-                        && played_songs.contains(song8.text) && played_songs.contains(song13.text) && played_songs.contains(song14.text)
-                        && played_songs.contains(song15.text) && played_songs.contains(song16.text))
-                {
-                    TWO_LINES = true
-                    Log.i("FAB", "Second line!")
-                    status = "LINETWO-"+name
-                    two_line_status = "Two Lines : " + name
-                }
-            } // 3 and 4
-            else if(song9_click && song10_click && song11_click && song12_click && song13_click && song14_click && song15_click && song16_click)
-            {
-                if (played_songs.contains(song9.text) && played_songs.contains(song10.text) && played_songs.contains(song11.text)
-                        && played_songs.contains(song12.text) && played_songs.contains(song13.text) && played_songs.contains(song14.text)
-                        && played_songs.contains(song15.text) && played_songs.contains(song16.text))
-                {
-                    TWO_LINES = true
-                    Log.i("FAB", "Second line!")
-                    status = "LINETWO-"+name
-                    two_line_status = "Two Lines : " + name
                 }
             }
-
-        } // End game
-        else if(!FULL_HOUSE)
-        {
-            if(song1_click && song2_click && song3_click && song4_click && song5_click && song6_click && song7_click && song8_click
-                    && song9_click && song10_click && song11_click && song12_click && song13_click && song14_click && song15_click && song16_click)
-            {
-                if (played_songs.contains(song9.text) && played_songs.contains(song10.text) && played_songs.contains(song11.text)
-                        && played_songs.contains(song12.text) && played_songs.contains(song13.text) && played_songs.contains(song14.text)
-                        && played_songs.contains(song15.text) && played_songs.contains(song16.text) && played_songs.contains(song9.text)
-                        && played_songs.contains(song10.text) && played_songs.contains(song11.text) && played_songs.contains(song12.text)
-                        && played_songs.contains(song13.text) && played_songs.contains(song14.text) && played_songs.contains(song15.text)
-                        && played_songs.contains(song16.text))
+            "FULL" -> {
+                if(!FULL_HOUSE)
                 {
+                    Log.i("Testing","works")
+                    victory.show()
                     FULL_HOUSE = true
-                    Log.i("FAB", "End Game!")
-                    status = "END-"+name
-                    full_house_status = "Full house : " + name
                 }
-
-
             }
+
         }
     }
 
+    override fun onBackPressed() {
+        if(playing)
+        {
+            Toast.makeText(this@GameClient , "Leaving the session will stop the game!",Toast.LENGTH_LONG).show()
+        }
+        else
+        {
+            super.onBackPressed()
+        }
 
-    override fun onStop() {
-        super.onStop()
+    }
+
+    fun reaction(v :View)
+    {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.reaction_layout)
+        val text = dialog.findViewById<TextView>(R.id.reaction_list)
+        val song_title = dialog.findViewById<TextView>(R.id.song_title)
+        if (played_songs.size != 0 )
+        {
+            song_title.setText(played_songs[played_songs.size-1])
+        }
+        var temp = ""
+        for((x,y) in reactions)
+        {
+            var emoji = ""
+            when(y){
+                "Loves" -> emoji = String(Character.toChars(0x1F60A))
+                "Hates" -> emoji = String(Character.toChars(0x1F612))
+            }
+            temp += "$x : $emoji \n"
+        }
+        if(temp == "")
+        {
+            temp = "Be the first to react!"
+        }
+        text.setText(temp)
+        val happy = dialog.findViewById<FloatingActionButton>(R.id.happy_button)
+        happy.setOnClickListener { reactions.put(username,"Loves")
+            react_content = "$username+HAPPY"
+            dialog.dismiss()
+        }
+        val bored = dialog.findViewById<FloatingActionButton>(R.id.bored_button)
+        bored.setOnClickListener { reactions.put(username,"Hates")
+            react_content = "$username+BORED"
+            dialog.dismiss()
+        }
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.show()
+
+    }
+
+
+
+    override fun onDestroy() {
         try {
             socket.close()
             output.close()
             input.close()
         }
         catch (e: IOException) {
-            // handler
+            Log.i("Client Socket","CLOSED ON DESTROY")
         }
+        super.onDestroy()
+
+    }
+
+
+    fun chatBox(v : View)
+    {
+        runOnUiThread { messageButton.count = 0 }
+        val dialog = chatDialog.Build(this)
+
+        chatDialog.sendButton.setOnClickListener {
+            if(chatDialog.text.text.isNotEmpty())
+            {
+                chatDialog.messages.add(Message(username,chatDialog.text.text.toString(),System.currentTimeMillis()))
+                chatDialog.myLog.add(Message(username,chatDialog.text.text.toString(),System.currentTimeMillis()))
+                chatDialog.text.setText("")
+                chatDialog.notifyChange()
+            }
+
+        }
+        dialog.show()
 
     }
 }

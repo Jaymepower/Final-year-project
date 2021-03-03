@@ -1,6 +1,8 @@
 package com.example.finalyearproject
 
 import android.content.Intent
+import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -8,6 +10,7 @@ import android.view.Window
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationRequest
@@ -38,6 +41,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
+
+        val video : VideoView = findViewById(R.id.videoView)
+        val uri = Uri.parse("android.resource://"+ packageName +"/"+R.raw.bingo_backround)
+        video.setVideoURI(uri)
+      //  video.start()
+        video.setOnCompletionListener { video.start() }
 
     }
 

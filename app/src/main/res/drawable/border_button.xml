@@ -6,13 +6,13 @@
 
     <gradient
         android:angle="270"
-        android:endColor="@color/pink"
+        android:endColor="@color/purple"
         android:startColor="@color/pink" />
 
-    <corners android:radius="3dp" />
+    <corners android:radius="5dp" />
 
     <stroke
-        android:width="12px"
+        android:width="7px"
         android:color="#E8f2fe" />
 
 

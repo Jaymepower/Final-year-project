@@ -6,17 +6,19 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/game_back"
+    android:background="@drawable/grey_gradient"
     tools:visibility="visible">
 
 
     <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/gridLayout"
         android:layout_width="543dp"
         android:layout_height="381dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
-        android:background="@color/white"
+        android:background="@drawable/grid_backround"
+        android:backgroundTint="@color/white"
         app:columnCount="4"
         app:columnOrderPreserved="false"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -33,7 +35,7 @@
             android:background="@drawable/border_button"
             android:onClick="boxclicked"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/song_2"
@@ -43,7 +45,7 @@
             android:background="@drawable/border_button"
             android:onClick="boxclicked"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/song_3"
@@ -52,7 +54,7 @@
             android:background="@drawable/border_button"
             android:onClick="boxclicked"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/song_4"
@@ -61,7 +63,7 @@
             android:background="@drawable/border_button"
             android:onClick="boxclicked"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/song_5"
@@ -70,7 +72,7 @@
             android:background="@drawable/border_button"
             android:onClick="boxclicked"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/song_6"
@@ -79,7 +81,7 @@
             android:background="@drawable/border_button"
             android:onClick="boxclicked"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/song_7"
@@ -88,7 +90,7 @@
             android:background="@drawable/border_button"
             android:onClick="boxclicked"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/song_8"
@@ -97,7 +99,7 @@
             android:background="@drawable/border_button"
             android:onClick="boxclicked"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/song_9"
@@ -106,7 +108,7 @@
             android:background="@drawable/border_button"
             android:onClick="boxclicked"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/song_10"
@@ -115,7 +117,7 @@
             android:background="@drawable/border_button"
             android:onClick="boxclicked"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/song_11"
@@ -124,7 +126,7 @@
             android:background="@drawable/border_button"
             android:onClick="boxclicked"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/song_12"
@@ -133,7 +135,7 @@
             android:background="@drawable/border_button"
             android:onClick="boxclicked"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/song_13"
@@ -142,7 +144,7 @@
             android:background="@drawable/border_button"
             android:onClick="boxclicked"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/song_14"
@@ -151,7 +153,7 @@
             android:background="@drawable/border_button"
             android:onClick="boxclicked"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/song_15"
@@ -160,7 +162,7 @@
             android:background="@drawable/border_button"
             android:onClick="boxclicked"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/song_16"
@@ -169,33 +171,37 @@
             android:background="@drawable/border_button"
             android:onClick="boxclicked"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
 
     </androidx.gridlayout.widget.GridLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginBottom="24dp"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="12dp"
         android:backgroundTint="@color/red"
         android:clickable="true"
         android:onClick="validateLines"
         android:src="@drawable/ic_bingo_"
-        app:fabCustomSize="80dp"
+        app:backgroundTint="@color/white"
+        app:borderWidth="2.5dp"
+        app:fabCustomSize="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/popup_button"
+        app:layout_constraintEnd_toEndOf="parent"
         app:maxImageSize="70dp"
         app:rippleColor="#8301a2" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="203dp"
-        android:layout_height="67dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_width="197dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="28dp"
+        android:foregroundGravity="center"
+        android:paddingLeft="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/musicbingo" />
@@ -203,10 +209,11 @@
     <TextView
         android:id="@+id/now_playing"
         android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="16dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="16dp"
         android:textAlignment="center"
+        android:textSize="12dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/album_cover" />
@@ -215,7 +222,7 @@
         android:id="@+id/album_cover"
         android:layout_width="110dp"
         android:layout_height="110dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="60dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
@@ -223,17 +230,56 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/popup_button"
-        android:layout_width="59dp"
-        android:layout_height="56dp"
-        android:layout_marginEnd="38dp"
-        android:layout_marginBottom="32dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/fab_border"
         android:backgroundTint="@color/pink"
         android:clickable="true"
-        android:onClick="showpopup"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:onClick="showPopup"
+        app:backgroundTint="@color/white"
+        app:borderWidth="2.5dp"
+        app:fabCustomSize="45dp"
+        app:layout_constraintBottom_toTopOf="@+id/floatingActionButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:maxImageSize="35dp"
-        app:srcCompat="@drawable/ic_line" />
+        app:maxImageSize="25dp"
+        app:srcCompat="@drawable/ic_podium" />
+
+    <com.andremion.counterfab.CounterFab
+        android:id="@+id/reaction_button"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="95dp"
+        android:backgroundTint="@color/pink"
+        android:clickable="true"
+        android:onClick="reaction"
+        app:badgeBackgroundColor="@color/red"
+        app:badgePosition="RightBottom"
+        app:fabCustomSize="45dp"
+        app:layout_constraintBottom_toTopOf="@+id/chat_button"
+        app:layout_constraintEnd_toStartOf="@+id/popup_button"
+        app:maxImageSize="45dp"
+        app:srcCompat="@drawable/ic_smile" />
+
+    <com.andremion.counterfab.CounterFab
+        android:id="@+id/chat_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/fab_border"
+        android:backgroundTint="@color/pink"
+        android:clickable="true"
+        android:onClick="chatBox"
+        android:src="@drawable/ic_chat"
+        app:backgroundTint="@color/white"
+        app:badgeBackgroundColor="@color/red"
+        app:badgePosition="RightBottom"
+        app:borderWidth="2.5dp"
+        app:fabCustomSize="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/floatingActionButton"
+        app:maxImageSize="35dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

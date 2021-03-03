@@ -5,13 +5,14 @@
         <item>Electronic</item>
         <item>Rap</item>
         <item>Country</item>
+        <item>Festive</item>
     </string-array>
 
 
     <string-array name="rock_sublist">
         <item>Hard Rock</item>
         <item>Classic Rock</item>
-        <item>Alternative rock</item>
+        <item>Alternative</item>
         <item>Pop punk</item>
     </string-array>
 
@@ -20,6 +21,7 @@
     <item>Synth Pop</item>
     <item>Disco</item>
     <item>R&amp;B</item>
+    <item>No1\'s</item>
 </string-array>
 
     <string-array name="elect_sublist">
@@ -32,7 +34,7 @@
 
 
     <string-array name="rap_sublist">
-        <item>Mumble rap</item>
+        <item>Mumble Rap</item>
         <item>Old School Hip Hop</item>
         <item>Jazz Rap</item>
         <item>Lo-fi Hip Hop</item>
@@ -46,8 +48,184 @@
         <item>Modern Country</item>
     </string-array>
 
+    <string-array name="festive_sublist">
+        <item>Halloween</item>
+        <item>Christmas</item>
+    </string-array>
 
+
+    <string-array name="americana_wild">
+        <item>Windfall</item>
+        <item>Some Humans Ain\' t Humans</item>
+        <item>American Stooge</item>
+    </string-array>
+
+    <string-array name="bluegrass_wild">
+        <item>Wagon Wheel</item>
+        <item>The Ballad of Jed Clampett</item>
+        <item>Banjo Boys</item>
+    </string-array>
+
+    <string-array name="blues_wild">
+        <item>Slow Blues</item>
+        <item>Hoochie Coochie Man</item>
+        <item>Dust My Broom</item>
+    </string-array>
+
+    <string-array name="folk_wild">
+        <item>Paradise</item>
+        <item>Hello in There</item>
+        <item>Tom Dooley</item>
+    </string-array>
+
+    <string-array name="m_country_wild">
+        <item>Hotel Key</item>
+        <item>Drunk Girl</item>
+        <item>Raymond</item>
+    </string-array>
+
+    <string-array name="deep_wild">
+        <item>Prayer in C</item>
+        <item>Coma Cat</item>
+        <item>Desire</item>
+    </string-array>
+
+    <string-array name="DnB_wild">
+        <item>Brown Paper Bag</item>
+        <item>Messiah</item>
+        <item>Before Today</item>
+    </string-array>
+
+    <string-array name="house_wild">
+        <item>French Kiss</item>
+        <item>Your Love</item>
+        <item>No UFO\' s</item>
+    </string-array>
+
+    <string-array name="IDM">
+        <item>Papalon</item>
+        <item>Music is Math</item>
+        <item>Hasty Boom Alert</item>
+    </string-array>
+
+    <string-array name="techno_wild">
+        <item>Sandstorm</item>
+        <item>Cosmic Cars</item>
+        <item>Moon Rocks</item>
+    </string-array>
+
+    <string-array name="christmas_wild">
+        <item>The Little Drummer Boy</item>
+        <item>Little Saint Nick</item>
+        <item>Man With The Bag</item>
+    </string-array>
+
+    <string-array name="halloween_wild">
+        <item>Heads Will Roll</item>
+        <item>Dead Man\' s Party</item>
+        <item>Howlin\' for You</item>
+    </string-array>
+
+    <string-array name="charts_wild">
+        <item>Paradise</item>
+        <item>Levitating</item>
+        <item>Golden</item>
+    </string-array>
+
+    <string-array name="disco_wild">
+        <item>Love Train</item>
+        <item>I Love the Nightlife</item>
+        <item>Got to be Real</item>
+    </string-array>
+
+    <string-array name="ones_wild">
+        <item>Dont Start Now</item>
+        <item>Starboy</item>
+        <item>Perfect</item>
+    </string-array>
+
+
+
+    <string-array name="rnb_wild">
+        <item>Pick Up Your Feelings</item>
+        <item>Any Time,Any Place</item>
+        <item>Go Crazy</item>
+    </string-array>
+
+    <string-array name="synth_wild">
+        <item>West End Girls</item>
+        <item>Enola Gay</item>
+        <item>Video Killed The Radio Star</item>
+    </string-array>
+
+    <string-array name="j_rap_wild">
+        <item>Cantaloop</item>
+        <item>Jazz Thing</item>
+        <item>Buggin\'  Out</item>
+    </string-array>
+
+    <string-array name="lofi_wild">
+        <item>Lofi</item>
+        <item>i miss you</item>
+        <item>If Only</item>
+    </string-array>
+
+    <string-array name="mumble_wild">
+        <item>Gucci Gang</item>
+        <item>Trap Queen</item>
+        <item>Panda</item>
+    </string-array>
+
+    <string-array name="old_school_wild">
+        <item>I Know You Got Soul</item>
+        <item>Bone Thugs</item>
+        <item>Passing By Me</item>
+    </string-array>
+
+    <string-array name="alternative_wild">
+        <item>Everlong</item>
+        <item>Seven Nation Army</item>
+        <item>Buddy Holly</item>
+    </string-array>
+
+    <string-array name="classic_wild">
+        <item>Stairway to Heaven</item>
+        <item>Comfortably Numb</item>
+        <item>Start Me Up</item>
+    </string-array>
+
+    <string-array name="hard_wild">
+        <item>Welcome To The Jungle</item>
+        <item>Back in Black</item>
+        <item>Paranoid</item>
+    </string-array>
+
+    <string-array name="pop_p_wild">
+        <item>All the Small Things</item>
+        <item>Five Minutes to Midnight</item>
+        <item>Fall Back Down</item>
+    </string-array>
     <string-array name="empty">
 </string-array>
+
+    <string name="host_desc">
+        In order to play a game someone needs to be a host,
+        the  host will select the genre of the game and
+        will begin waiting for someone to connect
+    </string>
+
+    <string name="join_desc">
+        When a host is waiting for a game, a user can join before it begins,
+        you must be the same network to join the game
+    </string>
+
+    <string name="game_desc">
+        A song will play for a short amount of time for all users, the objective is the get a line, two lines
+        then a full house to win, press the bingo button to check weather you have achieved a line
+
+    </string>
+
+
+
 
 </resources>

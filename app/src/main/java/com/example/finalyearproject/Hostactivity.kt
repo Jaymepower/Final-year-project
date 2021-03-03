@@ -12,13 +12,14 @@ import androidx.appcompat.app.AppCompatActivity
 class Hostactivity: AppCompatActivity(){
 
     lateinit var access_token : String
+    lateinit var username : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.host_activity)
 
         access_token = intent.getStringExtra("token").toString()
-
+        username = intent.getStringExtra("name").toString()
 
         var genre : Spinner = findViewById(R.id.genre_spin)
         ArrayAdapter.createFromResource(
@@ -101,6 +102,18 @@ class Hostactivity: AppCompatActivity(){
                      subgenre.adapter = adapter
                  }
              }
+             else if(genre.selectedItem.toString()=="Festive")
+             {
+                 ArrayAdapter.createFromResource(
+                         this@Hostactivity,
+                         R.array.festive_sublist,
+                         R.layout.spinner_item
+                 ).also { adapter ->
+                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                     subgenre.adapter = adapter
+                 }
+             }
+
 
             }
 
@@ -115,11 +128,13 @@ class Hostactivity: AppCompatActivity(){
         {
             val sub : Spinner = findViewById(R.id.subgenre_spin)
             val genre : Spinner = findViewById(R.id.genre_spin)
-            val i : Intent = Intent(this,Game::class.java)
+            val i  = Intent(this,Game::class.java)
             i.putExtra("genre",genre.selectedItem.toString())
             i.putExtra("subgenre",sub.selectedItem.toString())
             i.putExtra("token",access_token)
+            i.putExtra("name",username)
             startActivity(i)
+            finish()
         }
 
 }

@@ -1,68 +1,60 @@
 package com.example.finalyearproject
 
-import android.app.DownloadManager
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
-import android.telecom.Call
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
-import androidx.annotation.RequiresApi
+import android.widget.LinearLayout
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
-import com.github.kittinunf.fuel.Fuel
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
 import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
 import java.net.URL
-import java.net.URLEncoder
-import java.net.URLEncoder.*
 import javax.net.ssl.HttpsURLConnection
-import javax.security.auth.callback.Callback
-
 
 
 class OptionsActivity : AppCompatActivity() {
 
     lateinit var token_store : SharedPreferences
-
+    lateinit var mAuth: FirebaseAuth
     private lateinit var database: DatabaseReference
+    lateinit var preferences: SharedPreferences
+    lateinit var progress : Dialog
+
 
     // User variables
     var id = ""
     var displayName = ""
     var email = ""
-
-
-    val client = OkHttpClient()
     var user = ""
 
     lateinit var access_token: String
-    lateinit var userInfo: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.options_activity)
 
-        // Recieving the access token in order to issue GET requests for app perimissions
-        var userInfo: TextView = findViewById(R.id.userinfo)
-        access_token = intent.getStringExtra("token").toString()
+        progress = Dialog(this)
+        progress.setCancelable(true)
+        progress.setContentView(R.layout.loading_dialog)
+        progress.show()
 
+        preferences = getSharedPreferences("users_id", Context.MODE_PRIVATE)
+        var editor = preferences.edit()
+
+
+        // Recieving the access token in order to issue GET requests for app perimissions
+        access_token = intent.getStringExtra("token").toString()
 
 
         database = FirebaseDatabase.getInstance().reference
@@ -75,7 +67,7 @@ class OptionsActivity : AppCompatActivity() {
                 val httpsURLConnection = withContext(Dispatchers.IO) {url.openConnection() as HttpsURLConnection }
                 httpsURLConnection.requestMethod = "GET"
                 // Adding the request parameters, in this case its the token needed in order to request user info
-                httpsURLConnection.setRequestProperty("Authorization", "Bearer "+access_token)
+                httpsURLConnection.setRequestProperty("Authorization", "Bearer " + access_token)
                 httpsURLConnection.doInput = true
                 httpsURLConnection.doOutput = false
 
@@ -88,15 +80,17 @@ class OptionsActivity : AppCompatActivity() {
                     // Spotify Id
                     id = jsonObject.getString("id")
                     Log.d("Spotify Id :", id)
+                    editor.putString("user_id", id)
+                    editor.commit()
 
                     // Spotify Display Name
                      displayName = jsonObject.getString("display_name")
                     Log.d("Spotify Display Name :", displayName)
+                    progress.dismiss()
 
                     // Spotify Email
                      email = jsonObject.getString("email")
                     Log.d("Spotify Email :", email)
-
 
 
                     Log.d("Spotify Access token :", access_token)
@@ -104,12 +98,8 @@ class OptionsActivity : AppCompatActivity() {
                     // Extracting the users now to only display the first
                     var firstName :CharSequence = displayName
 
-                    firstName = firstName.split(" ")[0]
 
-                    userInfo.setText("Hi " + firstName )
-
-
-                    addUser(id,displayName,email)
+                    addUser(id, displayName, email)
 
                 }
 
@@ -127,24 +117,22 @@ class OptionsActivity : AppCompatActivity() {
 
 
 
-    fun addUser(userID:String , name:String , email:String)
+    fun addUser(userID: String, name: String, email: String)
     {
-        val user = User(userID,name,email)
+        val user = User(userID, name, email, 0, 0)
 
-       val userRef : DatabaseReference = database.child("Users").child(userID)
+       val userRef : DatabaseReference = database.child("Users")
 
         userRef.addListenerForSingleValueEvent(object : ValueEventListener {
 
-            override fun onDataChange(snapshot: DataSnapshot)
-            {
-                if(!snapshot.exists())
-                    database.child("Users").setValue(user)
-                    Log.i("Firebase : ","Exisiting user found")
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (!snapshot.exists())
+                    userRef.push().setValue(user)
+                Log.i("Firebase : ", "Exisiting user found")
             }
 
-            override fun onCancelled(error: DatabaseError)
-            {
-                Log.i("Firebase : ","new user added")
+            override fun onCancelled(error: DatabaseError) {
+                Log.i("Firebase : ", "new user added")
             }
 
 
@@ -153,28 +141,38 @@ class OptionsActivity : AppCompatActivity() {
 
 
 
-    fun createGame(v : View)
+    fun createGame(v: View)
     {
-        val i = Intent(this,Hostactivity::class.java)
+        val i = Intent(this, Hostactivity::class.java)
         i.putExtra("token", access_token)
-        i.putExtra("name",displayName)
+        i.putExtra("name", displayName)
         startActivity(i)
     }
 
     fun profile(v: View)
     {
-        val i = Intent(this,Profile::class.java)
+        val i = Intent(this, Profile::class.java)
         i.putExtra("token", access_token)
         startActivity(i)
     }
 
-    fun JoinGame(v : View)
+    fun JoinGame(v: View)
     {
-        val i = Intent(this,JoinActvity::class.java)
+        val i = Intent(this, JoinActvity::class.java)
         i.putExtra("token", access_token)
-        i.putExtra("name",displayName)
+        i.putExtra("name", displayName)
         startActivity(i)
     }
+
+    fun howTo(v: View)
+    {
+        val i = Intent(this, HowTo::class.java)
+        startActivity(i)
+    }
+
+
+
+
 
 
 

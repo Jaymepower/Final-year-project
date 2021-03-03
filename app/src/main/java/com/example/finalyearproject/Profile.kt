@@ -1,11 +1,13 @@
 package com.example.finalyearproject
 
 
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.squareup.picasso.Callback
@@ -29,15 +31,16 @@ class Profile : AppCompatActivity() {
     lateinit var country_field : TextView ; lateinit var follower_field : TextView
 
     lateinit var profile_pic : ImageView
-    lateinit var progress : LinearLayout
+    lateinit var progress : Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.profile_activity)
 
-
-        progress = findViewById(R.id.llProgressBar)
-        progress.visibility = View.VISIBLE
+        progress = Dialog(this)
+        progress.setCancelable(true)
+        progress.setContentView(R.layout.loading_dialog)
+        progress.show()
 
         access_token = intent.getStringExtra("token").toString()
 
@@ -47,7 +50,7 @@ class Profile : AppCompatActivity() {
         country_field = findViewById(R.id.profile_country)
         follower_field = findViewById(R.id.profile_followers)
 
-        // GlobalScope allows asynchronous threads to run
+        // GlobalScope allows asynchronous threads to run outside of UI thread
         GlobalScope.launch(Dispatchers.Default) {
             // GET user info Spotify endpoint
             val url = URL("https://api.spotify.com/v1/me")
@@ -92,7 +95,7 @@ class Profile : AppCompatActivity() {
                 Picasso.get().load(img_url).into(profile_pic ,object: com.squareup.picasso.Callback
                 {
                     override fun onSuccess() {
-                        progress.visibility = View.GONE
+                      progress.dismiss()
                     }
 
                     override fun onError(e: java.lang.Exception?) {

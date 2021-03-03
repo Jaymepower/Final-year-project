@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.finalyearproject">
 
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
+
 
 
     <application
@@ -41,13 +43,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".Game" android:screenOrientation="landscape">
+        <activity android:name=".Game" android:screenOrientation="landscape" android:launchMode="singleTask">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".GameClient" android:screenOrientation="landscape">
+        <activity android:name=".GameClient" android:screenOrientation="landscape" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -59,13 +61,18 @@
             </intent-filter>
         </activity>
 
-
+        <activity android:name=".HowTo" >
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
 
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             />
+
 
         <meta-data
             android:name="preloaded_fonts"

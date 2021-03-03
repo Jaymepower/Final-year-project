@@ -1,6 +1,6 @@
 package com.example.finalyearproject
 
-class User(user_id : String, displayName :String ,email : String) {
+data class User(var user_id : String, var displayName :String, var email : String,var lines : Int,var score : Int) {
 
 }
 
