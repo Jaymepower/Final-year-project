@@ -27,7 +27,7 @@
             app:cardElevation="15dp">
 
             <ImageView
-                android:id="@+id/close_button"
+                android:id="@+id/leaderboard_close"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_gravity="right"
@@ -61,7 +61,7 @@
                 android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/message_cycler"
+                android:id="@+id/played_songs_cycler"
                 android:layout_width="500dp"
                 android:layout_height="200dp"
                 android:layout_gravity="center"

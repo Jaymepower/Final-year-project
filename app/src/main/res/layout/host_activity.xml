@@ -12,8 +12,8 @@
         android:id="@+id/subgenre_spin"
         android:layout_width="242dp"
         android:layout_height="84dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="84dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="80dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/genre_spin" />
 
@@ -31,7 +31,7 @@
         android:layout_width="245dp"
         android:layout_height="75dp"
         android:layout_marginEnd="80dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="50dp"
         android:background="@drawable/round_button"
         android:onClick="startGame"
         android:text="Create Game"

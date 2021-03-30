@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/better_wallpaper"
-    android:layout_above="@id/llProgressBar"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -31,7 +31,7 @@
         android:layout_width="245dp"
         android:layout_height="65dp"
         android:layout_marginStart="98dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="98dp"
         android:background="@drawable/round_button"
         android:drawableLeft="@drawable/music_note"
@@ -47,40 +47,86 @@
         android:layout_width="245dp"
         android:layout_height="65dp"
         android:layout_marginStart="98dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="98dp"
-        android:layout_marginBottom="219dp"
         android:background="@drawable/round_button"
         android:drawableLeft="@drawable/ic_user_icon"
         android:onClick="profile"
         android:text="Profile"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/join_game" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="80dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="140dp"
+        android:layout_marginEnd="4dp"
+        android:text="Powered by"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/imageView12"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView12"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="135dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_spotify_vec" />
 
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="382dp"
         android:layout_height="157dp"
-        android:layout_marginTop="52dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="68dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="50dp"
         app:layout_constraintBottom_toTopOf="@+id/create_game"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/musicbingo" />
 
     <ImageView
         android:id="@+id/imageView7"
         android:layout_width="51dp"
         android:layout_height="51dp"
-        android:layout_marginEnd="35dp"
-        android:layout_marginBottom="45dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="32dp"
         android:onClick="howTo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_question_mark" />
+
+    <Button
+        android:id="@+id/store_button"
+        android:layout_width="245dp"
+        android:layout_height="65dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/round_button"
+        android:drawableLeft="@drawable/ic_store"
+        android:onClick="gotoStore"
+        android:text="Store"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_button" />
+
+    <Button
+        android:id="@+id/insights_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="41dp"
+        android:layout_marginBottom="48dp"
+        android:onClick="gotoInsights"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,7 +16,16 @@
         <item>Pop punk</item>
     </string-array>
 
-<string-array name="pop_sublist">
+    <string-array name="rock_sublist_locked">
+        <item>Hard Rock &#128274;</item>
+        <item>Classic Rock</item>
+        <item>Alternative &#128274;</item>
+        <item>Pop punk &#128274;</item>
+    </string-array>
+
+
+
+    <string-array name="pop_sublist">
     <item>Charts</item>
     <item>Synth Pop</item>
     <item>Disco</item>
@@ -24,12 +33,28 @@
     <item>No1\'s</item>
 </string-array>
 
+    <string-array name="pop_sublist_locked">
+        <item>Charts</item>
+        <item>Synth Pop &#128274;</item>
+        <item>Disco &#128274;</item>
+        <item>R&amp;B &#128274;</item>
+        <item>No1\'s &#128274;</item>
+    </string-array>
+
     <string-array name="elect_sublist">
         <item>Techno</item>
         <item>House</item>
         <item>Deep House</item>
         <item>IDM</item>
         <item>Drum and Bass</item>
+    </string-array>
+
+    <string-array name="elect_sublist_locked">
+        <item>Techno &#128274;</item>
+        <item>House</item>
+        <item>Deep House &#128274;</item>
+        <item>IDM &#128274;</item>
+        <item>Drum and Bass &#128274;</item>
     </string-array>
 
 
@@ -40,6 +65,13 @@
         <item>Lo-fi Hip Hop</item>
     </string-array>
 
+    <string-array name="rap_sublist_locked">
+        <item>Mumble Rap</item>
+        <item>Old School Hip Hop &#128274;</item>
+        <item>Jazz Rap &#128274;</item>
+        <item>Lo-fi Hip Hop &#128274;</item>
+    </string-array>
+
     <string-array name="country_sublist">
         <item>Folk</item>
         <item>Americana</item>
@@ -47,6 +79,15 @@
         <item>Blues</item>
         <item>Modern Country</item>
     </string-array>
+
+    <string-array name="country_sublist_locked">
+        <item>Folk &#128274;</item>
+        <item>Americana &#128274;</item>
+        <item>Bluegrass &#128274;</item>
+        <item>Blues &#128274;</item>
+        <item>Modern Country</item>
+    </string-array>
+
 
     <string-array name="festive_sublist">
         <item>Halloween</item>
@@ -222,8 +263,28 @@
     <string name="game_desc">
         A song will play for a short amount of time for all users, the objective is the get a line, two lines
         then a full house to win, press the bingo button to check weather you have achieved a line
-
     </string>
+
+    <string name="winning_desc">
+        When you mark 4 songs on your sheet , press the bingo button to validate your card, remember that the songs on the sheet must
+        be marked red
+    </string>
+
+    <string name="react_desc">
+       Reactions let your friends know how you feel about a particular song , keep an eye out for notifications about new reactions!
+    </string>
+
+    <string name="leaderboard_desc">
+       The leaderboard button displays who has won the first line , second line and the winner respecitvely
+    </string>
+
+
+    <string name="locked">
+       test &#128274;
+    </string>
+
+
+
 
 
 

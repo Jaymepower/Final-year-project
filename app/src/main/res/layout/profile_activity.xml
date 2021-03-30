@@ -8,11 +8,6 @@
     android:background="@drawable/better_wallpaper"
     >
 
-    <include
-        android:id="@+id/llProgressBar"
-        android:visibility="gone"
-        layout="@layout/loading_layout"/>
-
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_pic"

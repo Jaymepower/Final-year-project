@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.finalyearproject">
+    package="com.jamie.finalyearproject"
 
-    <uses-permission android:name="android.permission.CAMERA" />
+    >
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.vending.BILLING" />
 
 
 
@@ -16,20 +18,20 @@
         android:theme="@style/Theme.AppCompat.NoActionBar">
 
 
-        <activity android:name=".MainActivity">
+        <activity android:name="com.jamie.finalyearproject.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".OptionsActivity">
+        <activity android:name="com.jamie.finalyearproject.OptionsActivity">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".Profile">
+        <activity android:name="com.jamie.finalyearproject.Profile">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -37,31 +39,43 @@
 
 
 
-        <activity android:name=".Hostactivity">
+        <activity android:name="com.jamie.finalyearproject.Hostactivity">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".Game" android:screenOrientation="landscape" android:launchMode="singleTask">
+        <activity android:name="com.jamie.finalyearproject.Game" android:screenOrientation="landscape" android:launchMode="singleTask">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".GameClient" android:screenOrientation="landscape" >
+        <activity android:name="com.jamie.finalyearproject.GameClient" android:screenOrientation="landscape" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".JoinActvity" >
+        <activity android:name="com.jamie.finalyearproject.JoinActvity" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".HowTo" >
+        <activity android:name="com.jamie.finalyearproject.HowTo" >
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.jamie.finalyearproject.Store" >
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.jamie.finalyearproject.Insights" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
