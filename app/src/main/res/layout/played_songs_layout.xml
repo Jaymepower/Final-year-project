@@ -27,7 +27,7 @@
             app:cardElevation="15dp">
 
             <ImageView
-                android:id="@+id/leaderboard_close"
+                android:id="@+id/win_dialog_close"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_gravity="right"

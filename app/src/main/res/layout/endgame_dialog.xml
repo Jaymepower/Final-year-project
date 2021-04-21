@@ -128,21 +128,24 @@
                 android:layout_width="180dp"
                 android:layout_height="25dp"
                 android:layout_gravity="center|top"
-                android:layout_marginTop="60dp" />
+                android:layout_marginTop="60dp"
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/end_game_twoline"
                 android:layout_width="180dp"
                 android:layout_height="25dp"
                 android:layout_gravity="center|top"
-                android:layout_marginTop="115dp" />
+                android:layout_marginTop="115dp"
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/end_game_winner"
                 android:layout_width="180dp"
                 android:layout_height="25dp"
                 android:layout_gravity="center|top"
-                android:layout_marginTop="170dp" />
+                android:layout_marginTop="170dp"
+                android:textColor="@color/black" />
 
             <ImageView
                 android:id="@+id/imageView26"

@@ -22,6 +22,13 @@ class HowTo : AppCompatActivity() {
         winning_desc.setText(R.string.winning_desc)
         val react_desc = findViewById<TextView>(R.id.react_desc)
         react_desc.setText(R.string.react_desc)
+        val leader_desc = findViewById<TextView>(R.id.leaderboard_desc)
+        leader_desc.setText(R.string.leaderboard_desc)
+        val songsPlayed_desc = findViewById<TextView>(R.id.songs_played_desc)
+        songsPlayed_desc.setText(R.string.songs_played_desc)
+        val chat_desc = findViewById<TextView>(R.id.chat_desc)
+        chat_desc.setText(R.string.chat_desc)
+
 
 
 

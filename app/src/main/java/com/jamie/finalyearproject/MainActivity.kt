@@ -1,5 +1,6 @@
 package com.jamie.finalyearproject
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -32,6 +33,8 @@ class MainActivity : AppCompatActivity() {
     // App id
     val CLIENT_ID: String = "6573a6cbc21f424fad81067b6ce53fd0"
 
+    lateinit var dialog : Dialog
+
 
 
 
@@ -43,13 +46,20 @@ class MainActivity : AppCompatActivity() {
         val video : VideoView = findViewById(R.id.videoView)
         val uri = Uri.parse("android.resource://"+ packageName +"/"+R.raw.bingo_backround)
         video.setVideoURI(uri)
-      //  video.start()
+        //video.start()
         video.setOnCompletionListener { video.start() }
 
     }
 
     fun login(v: View)
     {
+        dialog = Dialog(this)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.loading_dialog)
+        dialog.show()
+
+
+
         // instantiate builder with id , token request and redirect uri
         var builder: AuthenticationRequest.Builder
                 = AuthenticationRequest.Builder(CLIENT_ID,AuthenticationResponse.Type.TOKEN,REDIRECT_URI)
@@ -96,8 +106,7 @@ class MainActivity : AppCompatActivity() {
                         val editor = username_preferences.edit()
 
 
-                        val i = Intent(this, OptionsActivity::class.java)
-                        i.putExtra("token", accessToken)
+
 
                         GlobalScope.launch(Dispatchers.Default) {
                             // GET user info Spotify endpoint
@@ -146,6 +155,10 @@ class MainActivity : AppCompatActivity() {
                                         if (!snapshot.exists())
                                             userRef.push().setValue(user)
 
+                                        dialog.dismiss()
+
+                                        val i = Intent(this@MainActivity, OptionsActivity::class.java)
+                                        i.putExtra("token", accessToken)
 
                                         startActivity(i)
 
@@ -160,19 +173,15 @@ class MainActivity : AppCompatActivity() {
                                 })
 
 
-
-
                             }
-
                         }
-
-
 
 
                     }
 
                     AuthenticationResponse.Type.ERROR -> {
-                        Toast.makeText(this, "Error Logging in ", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Error Logging in, please try again ", Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
 
                     }
 

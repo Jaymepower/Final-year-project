@@ -27,7 +27,7 @@ class PlayedSongsDialog
             playedSongs.add(songs[i])
         }
 
-        val exit = dialog.findViewById<ImageView>(R.id.leaderboard_close)
+        val exit = dialog.findViewById<ImageView>(R.id.win_dialog_close)
         exit.setOnClickListener {
             dialog.dismiss()
 

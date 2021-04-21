@@ -38,6 +38,9 @@ class OptionsActivity : AppCompatActivity() {
         setContentView(R.layout.options_activity)
 
 
+        //FirebaseLogger().logMockUser()
+
+
 
         access_token = intent.getStringExtra("token").toString()
 
@@ -111,6 +114,12 @@ class OptionsActivity : AppCompatActivity() {
     {
         val i = Intent(this, Insights::class.java)
         i.putExtra("uid",id)
+        startActivity(i)
+    }
+
+    fun gotoCatalogue(v : View)
+    {
+        val i = Intent(this, GenreList::class.java)
         startActivity(i)
     }
 

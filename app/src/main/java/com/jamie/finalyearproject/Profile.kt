@@ -2,11 +2,17 @@ package com.jamie.finalyearproject
 
 
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.ViewAnimator
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -28,6 +34,11 @@ class Profile : AppCompatActivity() {
     lateinit var profile_pic : ImageView
     lateinit var progress : Dialog
 
+
+    lateinit var id : String
+    lateinit var logRef : DatabaseReference
+    lateinit var games : ArrayList<GameLog>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.profile_activity)
@@ -44,6 +55,13 @@ class Profile : AppCompatActivity() {
         email_field = findViewById(R.id.profile_email)
         country_field = findViewById(R.id.profile_country)
         follower_field = findViewById(R.id.profile_followers)
+
+
+        logRef = FirebaseDatabase.getInstance().getReference("Log")
+
+        games = ArrayList<GameLog>()
+
+
 
         // GlobalScope allows asynchronous threads to run outside of UI thread
         GlobalScope.launch(Dispatchers.Default) {
@@ -108,6 +126,65 @@ class Profile : AppCompatActivity() {
 
 
     }
+
+
+
+    fun showLog(v : View)
+    {
+
+        progress.show()
+        val uidPref = getSharedPreferences("uid", Context.MODE_PRIVATE)
+        id = uidPref.getString("uid",null).toString()
+
+
+
+        logRef.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                for(snap in snapshot.children)
+                {
+                    val uid = snap.child("user_id").value.toString()
+                    Log.i("Profile",uid)
+
+                    if(1 == 1) {
+
+                        val genre = snap.child("genre").value.toString()
+                        val subgenre = snap.child("subgenre").value.toString()
+                        val sp = snap.child("songsPlayed").value.toString().toInt()
+                        val date = snap.child("date").value.toString()
+                        val lines = snap.child("lines").value.toString().toInt()
+                        val score = snap.child("score").value.toString().toInt()
+                        val reacts = snap.child("reactions").value.toString().toInt()
+                        val win = snap.child("win").value.toString().toBoolean()
+
+                        Log.i("Profile",genre)
+                        games.add(GameLog(id,genre,subgenre,sp,date,lines,score,reacts,win))
+                    }
+
+                }
+                progress.dismiss()
+                val dialog = HistoryDialog().build(this@Profile,games)
+                dialog.show()
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+
+
+    }
+
+
+
+
+
+
+
+
+
 }
 
 

@@ -32,11 +32,21 @@
             app:cardMaxElevation="8dp">
 
             <TextView
+                android:id="@+id/game_status"
+                android:layout_width="350dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center|top"
+                android:layout_marginTop="45dp"
+                android:textColor="@color/purple"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
                 android:id="@+id/first_line_field"
                 android:layout_width="240dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="160dp"
-                android:layout_marginTop="65dp"
+                android:layout_marginTop="85dp"
                 android:textColor="@color/purple"
                 android:textSize="18dp" />
 
@@ -45,7 +55,7 @@
                 android:layout_width="240dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="160dp"
-                android:layout_marginTop="145dp"
+                android:layout_marginTop="165dp"
                 android:textColor="@color/purple"
                 android:textSize="18dp" />
 
@@ -54,7 +64,7 @@
                 android:layout_width="240dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="160dp"
-                android:layout_marginTop="225dp"
+                android:layout_marginTop="245dp"
                 android:textColor="@color/purple"
                 android:textSize="18dp" />
 
@@ -63,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="60dp"
-                android:layout_marginTop="220dp"
+                android:layout_marginTop="240dp"
                 app:srcCompat="@drawable/ic_trophy" />
 
             <ImageView
@@ -71,7 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="60dp"
-                android:layout_marginTop="140dp"
+                android:layout_marginTop="160dp"
                 app:srcCompat="@drawable/ic_two_line_icon" />
 
             <ImageView
@@ -79,11 +89,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="60dp"
-                android:layout_marginTop="60dp"
+                android:layout_marginTop="80dp"
                 app:srcCompat="@drawable/ic_one_line_icon" />
 
             <ImageView
-                android:id="@+id/leaderboard_close"
+                android:id="@+id/win_dialog_close"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_gravity="right"
@@ -95,7 +105,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:gravity="center"
                 android:text="Leaderboard"
                 android:textColor="@color/purple"

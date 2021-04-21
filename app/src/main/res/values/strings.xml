@@ -257,32 +257,59 @@
 
     <string name="join_desc">
         When a host is waiting for a game, a user can join before it begins,
-        you must be the same network to join the game
+        make sure you are both on the same network to join the game
     </string>
 
     <string name="game_desc">
-        A song will play for a short amount of time for all users, the objective is the get a line, two lines
-        then a full house to win, press the bingo button to check weather you have achieved a line
+        A song will play for a short amount of time for all users, the objective of the game is to mark songs that
+        are played during the game until your card is completed similar to traditional bingo
     </string>
 
     <string name="winning_desc">
-        When you mark 4 songs on your sheet , press the bingo button to validate your card, remember that the songs on the sheet must
-        be marked red
+        There are 3 stages of the game, the first line, two lines and a full house
+        \n
+        First Line : Any 4 songs that are positioned vertically across on any line
+        \n
+        Two Lines : Any 8 songs that make up two vertical lines
+        \n
+        Full House : By marking every song on the card you win the game!
+        \n
+        In order to check lines or to "bingo!" , press the red button to validate your lines,
+        if the songs have been played the buttons will turn green verifying your claim
     </string>
 
     <string name="react_desc">
-       Reactions let your friends know how you feel about a particular song , keep an eye out for notifications about new reactions!
+       Reactions let your friends know how you feel about a particular song , keep an eye out for notifications about new reactions from
+        your opponents!
     </string>
 
     <string name="leaderboard_desc">
-       The leaderboard button displays who has won the first line , second line and the winner respecitvely
+       The leaderboard button displays who has won the first line , second line and the winner respectively
+    </string>
+
+    <string name="chat_desc">
+       The Chat pop up allows you to communicate to other players, you\'ll be able to keep in touch with your opponents and see how they doing
+    </string>
+
+    <string name="songs_played_desc">
+       Clicking the album cover will display a list of the songs already played in case you have missed them
+    </string>
+
+    <string name="one_line">
+       Congratulations you have achieved the first line, keep going and try to get the next one!
+    </string>
+
+    <string name="two_line">
+       Congratulations you have achieved the two lines, the win is up for grabs, try to finish your card!
     </string>
 
 
-    <string name="locked">
-       test &#128274;
-    </string>
 
+
+
+
+    <string name="Charts">37i9dQZF1DWSVtp02hITpN</string>
+    <string name="Disco">37i9dQZF1DWSVtp02hITpN</string>
 
 
 

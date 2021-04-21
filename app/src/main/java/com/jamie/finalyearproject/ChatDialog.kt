@@ -31,17 +31,17 @@ class ChatDialog
         dialog.setContentView(R.layout.chat_dialog)
         recycler = dialog.findViewById<RecyclerView>(R.id.played_songs_cycler)
         sendButton = dialog.findViewById<Button>(R.id.send_button)
-        val closeButton = dialog.findViewById<ImageView>(R.id.leaderboard_close)
+        val closeButton = dialog.findViewById<ImageView>(R.id.win_dialog_close)
         val mLayoutManager: RecyclerView.LayoutManager = LinearLayoutManager(context.applicationContext)
         recycler.layoutManager = mLayoutManager
         closeButton.setOnClickListener { dialog.dismiss() }
         text = dialog.findViewById(R.id.message_box)
-        val adapter = chatAdapter(displayChat())
+        val adapter = ChatAdapter(displayChat())
         setAdapter(adapter)
         return dialog
     }
 
-    fun setAdapter(adapter: chatAdapter)
+    fun setAdapter(adapter: ChatAdapter)
     {
         recycler.adapter = adapter
     }

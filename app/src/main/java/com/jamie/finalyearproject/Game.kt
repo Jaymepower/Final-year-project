@@ -3,14 +3,12 @@ package com.jamie.finalyearproject
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
-import android.content.SharedPreferences
 import android.graphics.drawable.ColorDrawable
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.view.Window
 import android.widget.*
@@ -22,7 +20,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.*
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
-import com.yarolegovich.lovelydialog.LovelyStandardDialog
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.io.*
@@ -30,7 +27,7 @@ import java.net.ServerSocket
 import java.net.Socket
 import java.net.SocketException
 import java.net.URL
-import java.time.format.DateTimeFormatter
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.net.ssl.HttpsURLConnection
 import kotlin.collections.ArrayList
@@ -38,7 +35,7 @@ import kotlin.concurrent.thread
 
 
 class Game : AppCompatActivity() {
-            // playlist structure : "https://api.spotify.com/v1/playlists/15QCkUofmu6Gga9saOhENp/"
+
             val REDIRECT_URI: String = "com.example.finalyearproject://MainActivity/"
             val CLIENT_ID: String = "6573a6cbc21f424fad81067b6ce53fd0"
             var song_index = 0
@@ -62,7 +59,7 @@ class Game : AppCompatActivity() {
 
             private lateinit var played_songs: ArrayList<String>
             private lateinit var songs: ArrayList<Song>
-            private lateinit var reactions : HashMap<String,String>
+            private lateinit var reactions : HashMap<String, String>
 
             lateinit var mediaPlayer: MediaPlayer
             lateinit var genre_ref : DatabaseReference
@@ -72,7 +69,7 @@ class Game : AppCompatActivity() {
             lateinit var session : AlertDialog
             lateinit var lines : AlertDialog
             lateinit var played : AlertDialog.Builder
-            lateinit var victory : LovelyStandardDialog
+
 
             lateinit var chatDialog: ChatDialog
 
@@ -110,12 +107,12 @@ class Game : AppCompatActivity() {
                 username = intent.getStringExtra("name").toString()
 
 
+
                 var preferences = getSharedPreferences("username", Context.MODE_PRIVATE)
                 username = preferences.getString("username", null).toString()
 
-                preferences = getSharedPreferences("uid",Context.MODE_PRIVATE)
-                uid = preferences.getString("uid",null).toString()
-
+                preferences = getSharedPreferences("uid", Context.MODE_PRIVATE)
+                uid = preferences.getString("uid", null).toString()
 
 
 
@@ -125,50 +122,44 @@ class Game : AppCompatActivity() {
                 messageButton = findViewById(R.id.chat_button)
 
                 chatDialog = ChatDialog()
-                lines = AlertDialog.Builder(this,R.style.AlertDialogStyle).create()
-                session = AlertDialog.Builder(this,R.style.AlertDialogStyle).create()
+
+
+                lines = AlertDialog.Builder(this, R.style.AlertDialogStyle).create()
+                session = AlertDialog.Builder(this, R.style.AlertDialogStyle).create()
                 session.setTitle("Session")
                 session.setIcon(R.drawable.p_wifi)
                 session.setMessage("Devices connected \n               $user_count")
-                session.setButton(AlertDialog.BUTTON_NEUTRAL,"Start",DialogInterface.OnClickListener { dialog, which -> })
+                session.setButton(AlertDialog.BUTTON_NEUTRAL, "Start", DialogInterface.OnClickListener { dialog, which -> })
                 session.show()
 
-                card = Card(this,this@Game)
+                card = Card(this@Game, this@Game)
 
 
 
 
 
                 session.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {
-
                     if(user_count == 0 )
                     {
-                        Toast.makeText(this@Game,"No devices connected yet",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@Game, "No devices connected yet", Toast.LENGTH_SHORT).show()
                     }
                     else
                     {
                         start = true
                         session.dismiss()
                     }
-
                 }
 
-                victory = LovelyStandardDialog(this,R.style.TintTheme)
-                        .setTopColor(getColor(R.color.purple))
-                        .setIcon(R.drawable.bingo_smaller)
-                        .setTitle("Winner")
-                        .setTitleGravity(Gravity.CENTER)
-                        .setMessageGravity(Gravity.CENTER)
-                        .configureMessageView { message -> message.setTextColor(resources.getColor(R.color.black)) }
-                        .setNeutralButton("OK", View.OnClickListener { victory.dismiss() })
-                        .setCancelable(true)
 
-                played = AlertDialog.Builder(this,R.style.AlertDialogStyle)
+
+
+
+                played = AlertDialog.Builder(this, R.style.AlertDialogStyle)
                 played.setTitle("Played Songs")
 
 
                 album_cover.setOnClickListener {
-                    val dialog = PlayedSongsDialog().build(this,songs,8)
+                    val dialog = PlayedSongsDialog().build(this, songs, played_songs.size)
                     dialog.show()
                 }
 
@@ -184,34 +175,27 @@ class Game : AppCompatActivity() {
 
 
                 genre_ref.addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot)
-                    {
+                    override fun onDataChange(snapshot: DataSnapshot) {
 
-                        for(snap in snapshot.children)
-                        {
+                        for (snap in snapshot.children) {
                             val name = snap.key.toString()
-                            Log.i("Firebase",name)
 
-                            if(name.equals(genre))
-                            {
-                                Log.i("Genre Found",name)
-                                for(sub in snap.children) {
+                            if (name.equals(genre)) {
+                                Log.i("Genre Found", name)
+                                for (sub in snap.children) {
                                     val sub_g = sub.key.toString()
-                                    Log.i("Sub Genres", sub_g)
-                                    Log.i("Playlist ID", sub.value.toString())
 
-                                    if (sub_g.equals(sub_genre))
-                                    {
-                                        Log.i("Sub Genre Found", sub_g)
-                                        getPlaylist(token.toString(),sub.value.toString())
+
+                                    if (sub_g.equals(sub_genre)) {
+
+                                        getPlaylist(token.toString(), sub.value.toString())
                                     }
                                 }
                             }
                         }
                     }
 
-                    override fun onCancelled(error: DatabaseError)
-                    {
+                    override fun onCancelled(error: DatabaseError) {
                         TODO("Not yet implemented")
                     }
                 })
@@ -220,12 +204,10 @@ class Game : AppCompatActivity() {
 
 
 
-            fun getPlaylist(token : String,playlist_id : String)
+            fun getPlaylist(token: String, playlist_id: String)
             {
                 GlobalScope.launch(Dispatchers.Default) {
-                    // GET user info Spotify endpoint
-                    val url = URL("https://api.spotify.com/v1/playlists/" + playlist_id +"/")
-                    // Opening Https connection to set request
+                    val url = URL("https://api.spotify.com/v1/playlists/" + playlist_id + "/")
                     val httpsURLConnection = withContext(Dispatchers.IO) { url.openConnection() as HttpsURLConnection }
                     httpsURLConnection.requestMethod = "GET"
                     // Adding the request parameters, in this case its the token needed in order to request user info
@@ -259,28 +241,21 @@ class Game : AppCompatActivity() {
                              val image_url = image.getString("url")
                             Log.i("Track", album.toString())
                             Log.i("Image", images[0].toString())
-                            Log.i("Image URL",image_url)
+                            Log.i("Image URL", image_url)
 
                             if (preview != "null") {
                                 // Mapping JSON data to a kotlin object
-                                songs.add(Song(name, art_name, uri, preview,image_url))
+                                songs.add(Song(name, art_name, uri, preview, image_url))
                             }
-                            Log.i("Spotify API", name)
-                            Log.i("Spotify API", preview)
+
                         }
-                        Log.i("Spotify API", songs.toString())
-                        
+
+
                         handleClient()
                     }
 
-                    var temp = ArrayList<String>()
-                    for(i in songs)
-                    {
-                      temp.add(i.name)
-                    }
+                    card.printCard(card.generateCard(songs, sub_genre))
 
-                    card.printCard(card.generateCard(songs,sub_genre))
-                    playsong(songs[0])
 
                 }
 
@@ -308,7 +283,7 @@ class Game : AppCompatActivity() {
             the application
              */
 
-            fun playsong(song : Song) {
+            fun playsong(song: Song) {
 
                     played_songs.add(song.name)
                     now_playing.text = "${song.name} - ${song.artists}"
@@ -323,7 +298,7 @@ class Game : AppCompatActivity() {
                             this@Game.runOnUiThread {
                                 Log.i("LOADING IMAGE", image)
                                 Picasso.get()
-                                        .load(image)
+                                       .load(image)
                                         .into(album_cover)
 
                             }
@@ -337,8 +312,8 @@ class Game : AppCompatActivity() {
                                                 .setUsage(AudioAttributes.USAGE_MEDIA)
                                                 .build()
                                 )
-                                setDataSource(url)
-                                prepare() // might take long! (for buffering)
+                                //setDataSource(url)
+                                //prepare() // might take long! (for buffering)
                                 //start()
                                 Log.i("Server loading song...", next.toString())
                                 delay(5000)
@@ -346,6 +321,8 @@ class Game : AppCompatActivity() {
                                 next = true
                                 // 30 second wait in between songs
                             }
+
+
                         }
                     }
                 }
@@ -353,14 +330,14 @@ class Game : AppCompatActivity() {
 
             fun validateLines(v: View) {
 
+                val winDialog = WinDialog()
 
+                Log.i("ps",played_songs.toString())
                 when(card.validateCard(played_songs))
                 {
                     "ONE" -> {
-                        if(!ONE_LINE)
-                        {
-                            victory.setMessage("Congratulations $username you have won the first line!")
-                            victory.show()
+                        if (!ONE_LINE) {
+                            runOnUiThread { winDialog.build(this@Game,username,"ONE",played_songs.size).show() }
                             ONE_LINE = true
                             one_line_status = username
                             noLines += 1
@@ -368,37 +345,32 @@ class Game : AppCompatActivity() {
                         }
                     }
                     "TWO" -> {
-                            if(!TWO_LINES)
-                            {
-                                victory.setMessage("Congratulations $username you have won two lines!")
-                                victory.show()
-                                TWO_LINES = true
-                                two_line_status = username
-                                noLines += 2
-                                score += 50
-                            }
-                            }
+                        if (!TWO_LINES) {
+                            winDialog.build(this,username,"TWO",played_songs.size).show()
+                            TWO_LINES = true
+                            two_line_status = username
+                            noLines += 2
+                            score += 50
+                        }
+                    }
                     "FULL" -> {
-                        if(!FULL_HOUSE)
-                        {
-                            victory.setMessage("Congratulations $username you have won the game!")
-                            victory.show()
+                        if (!FULL_HOUSE) {
+
                             FULL_HOUSE = true
                             start = false
                             full_house_status = username
                             noLines += 4
                             score += 100
+                            card.cleanCard()
                             firebaseLog = FirebaseLogger()
-                            firebaseLog.publishDetails(this@Game, noLines,score)
-                            firebaseLog.LogGameDetails(GameLog(uid,genre,sub_genre,played_songs.size,Calendar.DATE.toString(),noLines,score))
-                            LeaderboardDialog().endGame(this@Game,one_line_status,two_line_status,full_house_status,noLines,score,reactCount,played_songs.size).show()
+                            firebaseLog.publishDetails(this@Game, noLines, score)
+                            firebaseLog.LogGameDetails(GameLog(uid, genre, sub_genre, played_songs.size,SimpleDateFormat("yyyy-MM-dd").format(Date(System.currentTimeMillis())), noLines, score, reactCount,true))
+                            LeaderboardDialog().endGame(this@Game, one_line_status, two_line_status, full_house_status, noLines, score, reactCount, played_songs.size).show()
                         }
                     }
-
                 }
-
-
             }
+
 
                 fun handleClient()
                {
@@ -406,7 +378,7 @@ class Game : AppCompatActivity() {
 
                        val users = ArrayList<Socket>()
                        val server = ServerSocket(6000)
-                       Log.i("Server","Listening on ${server.localPort}")
+                       Log.i("Server", "Listening on ${server.localPort}")
                        while(true)
                        {
                            if(user_count != 3)
@@ -428,17 +400,20 @@ class Game : AppCompatActivity() {
 
     // ZfvoIX1UwvHAwmBa
     // redir add tcp:5000:6000
-            fun connect(client : Socket)
+            fun connect(client: Socket)
             {
                 GlobalScope.launch(Dispatchers.IO) {
 
                     try {
-                        Log.i("Server","Client Connected")
+                        Log.i("Server", "Client Connected")
                         val output = PrintWriter(client.getOutputStream(), true)
-                        var input = BufferedReader(InputStreamReader(client.inputStream))
+                        val input = BufferedReader(InputStreamReader(client.inputStream))
                         val jSong = Gson().toJson(songs)
                         Log.i("JSON LIST", "this is the json $jSong")
-                        output.println(jSong.toString()) // 1
+
+                        output.println("$genre-$sub_genre") // 1
+
+                        output.println(jSong.toString()) // 2
 
                         var status = "STATUS_NEUTRAL"
                         var change = "NO_CHANGE"
@@ -449,7 +424,6 @@ class Game : AppCompatActivity() {
                              which will indicate that the next song is to be played, the playSong method essentially
                              acts as a timer thread
                              */
-
 
                             if(next and start)
                             {
@@ -490,33 +464,34 @@ class Game : AppCompatActivity() {
                             val back = input.readLine() // 4
                             if(back != null)
                             {
-                                Log.i("Server (from Client)",back)
-
                                 if(!ONE_LINE && back.startsWith("ONE"))
                                 {
-                                    val c_name = back.substring(3,back.length)
-                                    Log.i("Server (Name recieved)",c_name)
+                                    val cName = back.substring(3, back.length)
                                     ONE_LINE = true
-                                    one_line_status = c_name
+                                    card.ONE_LINE = true
+                                    one_line_status = cName
+                                    runOnUiThread { Toast.makeText(this@Game,"$cName has achieved the first line",Toast.LENGTH_SHORT).show()}
 
                                 }
                                 else if(!TWO_LINES && back.startsWith("TWO"))
                                 {
-                                    val c_name = back.substring(3,back.length)
-                                    Log.i("Server (Name recieved)",c_name)
+                                    val cName = back.substring(3, back.length)
                                     TWO_LINES = true
-                                    two_line_status = c_name
+                                    card.TWO_LINES = true
+                                    two_line_status = cName
+                                    runOnUiThread { Toast.makeText(this@Game,"$cName has achieved the two lines",Toast.LENGTH_SHORT).show()}
 
                                 }
                                 else if(!FULL_HOUSE && back.startsWith("FULL"))
                                 {
-                                    val c_name = back.substring(3,back.length)
-                                    Log.i("Server (Name recieved)",c_name)
+                                    val cName = back.substring(3, back.length)
                                     FULL_HOUSE = true
-                                    full_house_status = c_name
+                                    card.FULL_HOUSE = true
+                                    full_house_status = cName
                                     firebaseLog = FirebaseLogger()
                                     firebaseLog.publishDetails(this@Game, noLines, score)
-                                    runOnUiThread { Runnable{LeaderboardDialog().build(this@Game,one_line_status,two_line_status,full_house_status).show() }.run()  }
+                                    runOnUiThread { card.cleanCard()
+                                        Runnable{LeaderboardDialog().endGame(this@Game, one_line_status, two_line_status, full_house_status, noLines, score, reactCount, played_songs.size).show() }.run()  }
                                 }
 
                             }
@@ -527,19 +502,22 @@ class Game : AppCompatActivity() {
                             if(!c_react.isNullOrEmpty())
                             {
                                 val s_react = c_react.split("+")
+
+                                if(!reactions.containsKey(s_react[0]))
+                                    reactCount ++
+
+
                                 when(s_react[1])
                                 {
                                     "HAPPY" -> {
-                                        if(!reactions[s_react[0]].equals("Loves"))
-                                        {
-                                            runOnUiThread {react_button.increase()  }
+                                        if (!reactions[s_react[0]].equals("Loves")) {
+                                            runOnUiThread { react_button.increase() }
                                         }
                                         reactions[s_react[0]] = "Loves"
                                     }
                                     "BORED" -> {
-                                        if(!reactions[s_react[0]].equals("Hates"))
-                                        {
-                                            runOnUiThread {react_button.increase()  }
+                                        if (!reactions[s_react[0]].equals("Hates")) {
+                                            runOnUiThread { react_button.increase() }
                                         }
                                         reactions[s_react[0]] = "Hates"
                                     }
@@ -550,14 +528,14 @@ class Game : AppCompatActivity() {
                             var last_message = ""
                             if(chatDialog.myLog.isNotEmpty())
                             {
-                                last_message = Gson().toJson(chatDialog.myLog[chatDialog.myLog.size-1])
+                                last_message = Gson().toJson(chatDialog.myLog[chatDialog.myLog.size - 1])
                             }
                             output.println(last_message)
 
                             val messagesString = input.readLine()
                             if(messagesString != "")
                             {
-                                val message = Gson().fromJson(messagesString,Message::class.java)
+                                val message = Gson().fromJson(messagesString, Message::class.java)
                                 if (!chatDialog.messages.contains(message))
                                 {
                                     runOnUiThread { messageButton.increase()
@@ -569,16 +547,16 @@ class Game : AppCompatActivity() {
                         }
 
 
-                    }catch (e : SocketException)
+                    } catch (e: SocketException)
                     {
-                        runOnUiThread { Toast.makeText(this@Game,"Connection Lost",Toast.LENGTH_SHORT).show() }
+                        runOnUiThread { Toast.makeText(this@Game, "Connection Lost", Toast.LENGTH_SHORT).show() }
                     }
 
                 }
             }
 
 
-    fun reaction(v : View)
+    fun reaction(v: View)
     {
         runOnUiThread {react_button.count = 0  }
         val dialog = Dialog(this)
@@ -590,7 +568,7 @@ class Game : AppCompatActivity() {
         val song_title = dialog.findViewById<TextView>(R.id.song_title)
         song_title.text = songs[0].name
         var temp = ""
-        for((x,y) in reactions)
+        for((x, y) in reactions)
         {
             var emoji = ""
             when(y){
@@ -612,7 +590,7 @@ class Game : AppCompatActivity() {
                 reactCount ++
             }
 
-            reactions.put(username,"Loves")
+            reactions.put(username, "Loves")
             react = "$username+HAPPY"
             dialog.dismiss()
         }
@@ -624,7 +602,7 @@ class Game : AppCompatActivity() {
                 reactCount ++
             }
 
-            reactions.put(username,"Hates")
+            reactions.put(username, "Hates")
             react = "$username+BORED"
             dialog.dismiss()
         dialog.dismiss()
@@ -635,28 +613,28 @@ class Game : AppCompatActivity() {
     override fun onBackPressed() {
         if (start)
         {
-            Toast.makeText(this@Game , "Leaving the session will stop the game!",Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@Game, "Leaving the session will stop the game!", Toast.LENGTH_SHORT).show()
         }
         else{
             super.onBackPressed()
         }
     }
 
-    fun showPopup(v : View)
-            {
-               LeaderboardDialog().build(this,one_line_status,two_line_status,full_house_status).show()
-            }
+    fun showPopup(v: View)
+    {
+       LeaderboardDialog().build(this, one_line_status, two_line_status, full_house_status).show()
+    }
 
 
-    fun chatBox(v : View)
+    fun chatBox(v: View)
     {
         runOnUiThread { messageButton.count = 0 }
         val dialog = chatDialog.Build(this)
         chatDialog.sendButton.setOnClickListener {
             if(chatDialog.text.text.isNotEmpty())
             {
-                chatDialog.messages.add(Message(username,chatDialog.text.text.toString(),System.currentTimeMillis()))
-                chatDialog.myLog.add(Message(username,chatDialog.text.text.toString(),System.currentTimeMillis()))
+                chatDialog.messages.add(Message(username, chatDialog.text.text.toString(), System.currentTimeMillis()))
+                chatDialog.myLog.add(Message(username, chatDialog.text.text.toString(), System.currentTimeMillis()))
                 chatDialog.text.setText("")
                 chatDialog.notifyChange()
             }
