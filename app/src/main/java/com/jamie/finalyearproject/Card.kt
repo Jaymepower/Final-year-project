@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import org.jetbrains.anko.find
+import kotlin.math.roundToInt
 
 class Card(val context: Context, val activity: Activity) {
 
@@ -313,9 +314,30 @@ class Card(val context: Context, val activity: Activity) {
 
         val temp = ArrayList<String>()
 
+
         if(mutatedCards != players-1)
         {
-            for (i in songs) { temp.add(i.name) }
+            var slice = 1.0
+
+            if(songs.size >= 70)
+            {
+                slice = 0.5
+            }
+            else if (songs.size >= 50)
+            {
+                slice = 0.6
+            }
+            else if(songs.size >= 40)
+            {
+                slice = 0.7
+            }
+
+
+            for(i in 0 until (songs.size.toDouble() * slice).roundToInt())
+            {
+                temp.add(songs[i].name)
+            }
+
 
             when(sub_genre)
             {
@@ -347,6 +369,7 @@ class Card(val context: Context, val activity: Activity) {
             }
             mutatedCards ++
         }
+        temp.shuffle()
 
         return temp
     }

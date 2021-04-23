@@ -1,12 +1,16 @@
 package com.jamie.finalyearproject
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import jp.wasabeef.blurry.Blurry
 
 class LeaderboardDialog
 {
@@ -75,6 +79,7 @@ class LeaderboardDialog
         dialog.setContentView(R.layout.endgame_dialog)
 
 
+
         val oneLine = dialog.findViewById<TextView>(R.id.end_game_oneline)
         val twoLine = dialog.findViewById<TextView>(R.id.end_game_twoline)
         val win = dialog.findViewById<TextView>(R.id.end_game_winner)
@@ -86,8 +91,12 @@ class LeaderboardDialog
         val button = dialog.findViewById<Button>(R.id.endgame_button)
 
         button.setOnClickListener {
+            dialog.dismiss()
             val i = Intent(context,OptionsActivity::class.java)
+            val activity = context as Activity
             context.startActivity(i)
+            activity.finish()
+
         }
 
         oneLine.text = first

@@ -60,11 +60,13 @@ class Game : AppCompatActivity() {
             private lateinit var played_songs: ArrayList<String>
             private lateinit var songs: ArrayList<Song>
             private lateinit var reactions : HashMap<String, String>
+            private lateinit var users : ArrayList<Socket>
 
             lateinit var mediaPlayer: MediaPlayer
             lateinit var genre_ref : DatabaseReference
             lateinit var firebaseLog : FirebaseLogger
 
+            lateinit var server : ServerSocket
 
             lateinit var session : AlertDialog
             lateinit var lines : AlertDialog
@@ -180,8 +182,7 @@ class Game : AppCompatActivity() {
                         for (snap in snapshot.children) {
                             val name = snap.key.toString()
 
-                            if (name.equals(genre)) {
-                                Log.i("Genre Found", name)
+                            if (name == genre) {
                                 for (sub in snap.children) {
                                     val sub_g = sub.key.toString()
 
@@ -222,9 +223,7 @@ class Game : AppCompatActivity() {
                         val name = jsonObject.getString("name")// Name of playlist
                         val page = jsonObject.getJSONObject("tracks")//Pager object
                         val song = page.getJSONArray("items")//Items array inside of pager object
-                        Log.i("Spotify API", name.toString())
-                        Log.i("Spotify API", page.toString())
-                        Log.i("Spotify API", song.toString())
+
                         for (i in 0 until song.length()) {
                             val item = song.getJSONObject(i)
                             // Iterating the playlist for each track
@@ -239,9 +238,7 @@ class Game : AppCompatActivity() {
                             val images = album.getJSONArray("images")
                              val image = images[0] as JSONObject
                              val image_url = image.getString("url")
-                            Log.i("Track", album.toString())
-                            Log.i("Image", images[0].toString())
-                            Log.i("Image URL", image_url)
+
 
                             if (preview != "null") {
                                 // Mapping JSON data to a kotlin object
@@ -250,7 +247,7 @@ class Game : AppCompatActivity() {
 
                         }
 
-
+                        songs.shuffle()
                         handleClient()
                     }
 
@@ -296,7 +293,6 @@ class Game : AppCompatActivity() {
 
                         GlobalScope.launch {
                             this@Game.runOnUiThread {
-                                Log.i("LOADING IMAGE", image)
                                 Picasso.get()
                                        .load(image)
                                         .into(album_cover)
@@ -332,7 +328,7 @@ class Game : AppCompatActivity() {
 
                 val winDialog = WinDialog()
 
-                Log.i("ps",played_songs.toString())
+
                 when(card.validateCard(played_songs))
                 {
                     "ONE" -> {
@@ -376,19 +372,22 @@ class Game : AppCompatActivity() {
                {
                    GlobalScope.launch(Dispatchers.IO) {
 
-                       val users = ArrayList<Socket>()
-                       val server = ServerSocket(6000)
+                       users = ArrayList()
+                       server = ServerSocket(6000)
                        Log.i("Server", "Listening on ${server.localPort}")
                        while(true)
                        {
                            if(user_count != 3)
                            {
-                               val sock = server.accept()
-                               thread(start = true) { connect(sock) }
-                               users.add(sock)
-                               user_count ++
-                               card.players = user_count
-                               runOnUiThread {  session.setMessage("Devices connected\n                $user_count") }
+                               try{
+                                   val sock = server.accept()
+                                   thread(start = true) { connect(sock) }
+                                   users.add(sock)
+                                   user_count ++
+                                   card.players = user_count
+                                   runOnUiThread {  session.setMessage("Devices connected\n                $user_count") }
+                               }catch (e : SocketException){}
+
 
                            }
 
@@ -408,7 +407,7 @@ class Game : AppCompatActivity() {
                         Log.i("Server", "Client Connected")
                         val output = PrintWriter(client.getOutputStream(), true)
                         val input = BufferedReader(InputStreamReader(client.inputStream))
-                        val jSong = Gson().toJson(songs)
+                        val jSong = Gson().toJson(card.generateCard(songs,sub_genre))
                         Log.i("JSON LIST", "this is the json $jSong")
 
                         output.println("$genre-$sub_genre") // 1
@@ -428,10 +427,11 @@ class Game : AppCompatActivity() {
                             if(next and start)
                             {
                                 next = false // Resets the next boolean so another song will be played
-                                val n_song = Gson().toJson(songs[song_index])
-                                status = "SONG$n_song"
+
                                 if(song_index < songs.size)
                                 {
+                                    val n_song = Gson().toJson(songs[song_index])
+                                    status = "SONG$n_song"
                                     playsong(songs[song_index])
                                 }
                             }
@@ -489,12 +489,20 @@ class Game : AppCompatActivity() {
                                     card.FULL_HOUSE = true
                                     full_house_status = cName
                                     firebaseLog = FirebaseLogger()
+                                    try{
+                                        input.close()
+                                        output.close()
+                                    }catch(e : IOException)
+                                    { }
+
                                     firebaseLog.publishDetails(this@Game, noLines, score)
                                     runOnUiThread { card.cleanCard()
                                         Runnable{LeaderboardDialog().endGame(this@Game, one_line_status, two_line_status, full_house_status, noLines, score, reactCount, played_songs.size).show() }.run()  }
                                 }
 
                             }
+
+
 
                             output.println(react)
                             val c_react = input.readLine()
@@ -547,9 +555,12 @@ class Game : AppCompatActivity() {
                         }
 
 
-                    } catch (e: SocketException)
+                    } catch (e: IOException)
                     {
-                        runOnUiThread { Toast.makeText(this@Game, "Connection Lost", Toast.LENGTH_SHORT).show() }
+                        try {
+                            for(i in users)
+                                i.close()
+                        }catch (e : IOException){}
                     }
 
                 }
@@ -641,6 +652,37 @@ class Game : AppCompatActivity() {
         }
         dialog.show()
 
+    }
+
+    override fun onDestroy() {
+        try {
+
+            server.close()
+            for(i in users)
+            {
+                i.getOutputStream().close()
+                i.getInputStream().close()
+                i.close()
+            }
+        }catch (e : IOException){}
+        super.onDestroy()
+
+    }
+
+
+    override fun onStop() {
+        try {
+            server.close()
+            for(i in users)
+            {
+                i.getOutputStream().close()
+                i.getInputStream().close()
+                i.close()
+            }
+        }catch (e : IOException){}
+
+        finish()
+        super.onStop()
     }
 
 

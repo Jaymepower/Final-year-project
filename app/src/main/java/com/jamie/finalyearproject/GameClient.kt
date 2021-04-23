@@ -83,11 +83,11 @@ class GameClient : AppCompatActivity()
     lateinit var leaderboard : FloatingActionButton
     lateinit var card : Card
 
-    lateinit var lobby : AlertDialog
+
     lateinit var chatDialog: ChatDialog
     lateinit var firebaseLogger: FirebaseLogger
 
-    private lateinit var song_list: ArrayList<Song>
+    private lateinit var song_list: ArrayList<String>
     private lateinit var played_songs : ArrayList<String>
     private lateinit var reactions : HashMap<String,String>
     private lateinit var psCyclerList : ArrayList<Song>
@@ -114,11 +114,6 @@ class GameClient : AppCompatActivity()
         firebaseLogger = FirebaseLogger()
 
 
-        lobby = AlertDialog.Builder(this@GameClient).create()
-        lobby.setTitle("Session")
-        lobby.setIcon(R.drawable.p_wifi)
-        lobby.setMessage("Looking for connection...")
-        lobby.show()
 
         album_cover = findViewById(R.id.album_cover)
         now_playing = findViewById(R.id.now_playing)
@@ -161,6 +156,10 @@ class GameClient : AppCompatActivity()
     {
         Log.i("Client","Client Opening Socket")
         GlobalScope.launch (Dispatchers.IO){
+
+            try
+            {
+
                 socket = Socket("10.0.2.2", 5000)
                 playing = true
                 output = PrintWriter(socket.getOutputStream(), true)
@@ -170,11 +169,11 @@ class GameClient : AppCompatActivity()
                 Log.i("Client Connected", "Connected to Server ${socket.inetAddress.hostAddress}")
 
 
-                lobby.setMessage("Game found , waiting for host to begin the game")
 
-            val genres = input.readLine() /////1
 
-               if(genres != null)
+                val genres = input.readLine() /////1
+
+                if(genres != null)
                 {
                     val genList = genres.split("-")
                     genre = genList[0]
@@ -187,18 +186,12 @@ class GameClient : AppCompatActivity()
                 {
                     val songs = JSONArray(mes)
 
-                    for (i in 0 until songs.length()) {
-                        val item = songs.getJSONObject(i)
-                        Log.i("Client", item.toString())
-                        val album_url = item.getString("album_url")
-                        val artists = item.getString("artists")
-                        val name = item.getString("name")
-                        val preview_url = item.getString("preview_url")
-                        val song_uri = item.getString("song_uri")
-                        song_list.add(Song(name,artists,song_uri,preview_url,album_url))
-
+                    for(i in 0 until songs.length())
+                    {
+                        song_list.add(songs[i].toString())
                     }
-                    card.printCardbySong(song_list)
+
+                    card.printCard(song_list)
                 }
 
 
@@ -211,8 +204,7 @@ class GameClient : AppCompatActivity()
                     {
                         if(newSong.startsWith("SONG"))
                         {
-                            if(lobby.isShowing)
-                                lobby.dismiss()
+
 
                             Log.i("Client", "Processing song")
                             val song = newSong.substring(4,newSong.length)
@@ -256,10 +248,15 @@ class GameClient : AppCompatActivity()
                             card.FULL_HOUSE = true
                             val n_line = change.substring(4,change.length)
                             full_house_status = n_line
+                            try{
+                                socket.close()
+                                input.close()
+                                output.close()
+                            } catch (e : IOException){}
                             firebaseLogger.publishDetails(this@GameClient, noLines,score)
                             firebaseLogger.LogGameDetails(GameLog(uid,genre,subGenre,played_songs.size, SimpleDateFormat("yyyy-MM-dd").format(Date(System.currentTimeMillis())),noLines,score,reactCount,false))
                             runOnUiThread { card.cleanCard()
-                                kotlinx.coroutines.Runnable { LeaderboardDialog().endGame(this@GameClient, one_line_status, two_line_status, full_house_status, noLines, score, reactCount, played_songs.size).show() }.run()  }
+                                LeaderboardDialog().endGame(this@GameClient, one_line_status, two_line_status, full_house_status, noLines, score, reactCount, played_songs.size).show()  }
                         }
 
 
@@ -322,7 +319,7 @@ class GameClient : AppCompatActivity()
                         if (!chatDialog.messages.contains(message))
                         {
                             runOnUiThread { messageButton.increase()
-                             chatDialog.notifyChange()
+                                chatDialog.notifyChange()
                             }
                             chatDialog.messages.add(message)
 
@@ -339,6 +336,13 @@ class GameClient : AppCompatActivity()
 
 
                 }
+
+
+            } catch (e : IOException)
+            {
+                Log.i("Socket","Closed")
+            }
+
 
 
         }
@@ -499,6 +503,17 @@ class GameClient : AppCompatActivity()
         }
         super.onDestroy()
 
+    }
+
+    override fun onStop() {
+        try {
+            socket.close()
+            output.close()
+            input.close()
+        }catch (e : IOException){}
+
+        finish()
+        super.onStop()
     }
 
 

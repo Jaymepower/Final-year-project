@@ -5,6 +5,7 @@
     android:layout_width="480dp"
     android:layout_height="320dp"
     android:layout_gravity="center"
+    android:alpha="128"
     android:background="@color/grey"
     android:elevation="4dp"
     android:fadingEdgeLength="8dp"
@@ -22,7 +23,7 @@
         android:orientation="vertical">
 
         <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
+            android:layout_width="480dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:elevation="4dp"
@@ -173,7 +174,6 @@
                 android:background="@drawable/round_button"
                 android:paddingRight="15dp"
                 android:text="End"
-                android:textAlignment="center"
                 android:textColor="@color/white" />
 
             <TextView
