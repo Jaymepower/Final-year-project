@@ -31,7 +31,7 @@ class WinDialog
                 .setDirection(0.0, 359.0)
                 .setSpeed(1f, 5f)
                 .setFadeOutEnabled(true)
-                .setTimeToLive(2000L)
+                .setTimeToLive(1500L)
                 .addSizes(Size(6, 10f))
         .setPosition(-50f, DisplayMetrics().widthPixels + 50f, -50f, -50f)
             .streamFor(350, 4000)
@@ -65,7 +65,7 @@ class WinDialog
             }
             "TWO" -> {
                 statusField.setText(R.string.two_line)
-                objective.text = "Two Lines"
+                objective.text = "Full House"
             }
         }
 

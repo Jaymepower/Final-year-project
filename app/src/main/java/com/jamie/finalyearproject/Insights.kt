@@ -94,6 +94,8 @@ class Insights : AppCompatActivity()
         colors.add(Color.parseColor("#8b4513")) // Brown
         colors.add(Color.parseColor("#177972")) // Tourqouise
         colors.add(Color.parseColor("#FD63F9")) // logo pink
+        colors.shuffle()
+
 
 
         var gamesPlayed = 0

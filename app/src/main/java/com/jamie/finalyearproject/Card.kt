@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
-import org.jetbrains.anko.find
 import kotlin.math.roundToInt
 
 class Card(val context: Context, val activity: Activity) {
@@ -18,7 +17,7 @@ class Card(val context: Context, val activity: Activity) {
     var FULL_HOUSE: Boolean = false
 
     var mutatedCards = 0
-    var players = 0
+    var players = 1
 
     var song1_click: Boolean = false;
     var song2_click: Boolean = false;
@@ -265,47 +264,23 @@ class Card(val context: Context, val activity: Activity) {
 
     fun printCard(songs : ArrayList<String>)
     {
-        val temp = songs
 
-        song1.text = temp[0]
-        song2.text = temp[1]
-        song3.text = temp[2]
-        song4.text = temp[3]
-        song5.text = temp[4]
-        song6.text = temp[5]
-        song7.text = temp[6]
-        song8.text = temp[7]
-        song9.text = temp[8]
-        song10.text = temp[9]
-        song11.text = temp[10]
-        song12.text = temp[11]
-        song13.text = temp[12]
-        song14.text = temp[13]
-        song15.text = temp[14]
-        song16.text = temp[15]
-    }
-
-    fun printCardbySong(playlist : ArrayList<Song>)
-    {
-        val songs = playlist
-        song1.setText(songs[0].name)
-        song2.setText(songs[1].name)
-        song3.setText(songs[2].name)
-        song4.setText(songs[3].name)
-        song5.setText(songs[4].name)
-        song6.setText(songs[5].name)
-        song7.setText(songs[6].name)
-        song8.setText(songs[7].name)
-        song9.setText(songs[8].name)
-        song10.setText(songs[9].name)
-        song11.setText(songs[10].name)
-        song12.setText(songs[11].name)
-        song13.setText(songs[12].name)
-        song14.setText(songs[13].name)
-        song15.setText(songs[14].name)
-        song16.setText(songs[15].name)
-
-
+        song1.text = songs[0]
+        song2.text = songs[1]
+        song3.text = songs[2]
+        song4.text = songs[3]
+        song5.text = songs[4]
+        song6.text = songs[5]
+        song7.text = songs[6]
+        song8.text = songs[7]
+        song9.text = songs[8]
+        song10.text = songs[9]
+        song11.text = songs[10]
+        song12.text = songs[11]
+        song13.text = songs[12]
+        song14.text = songs[13]
+        song15.text = songs[14]
+        song16.text = songs[15]
     }
 
 
@@ -314,33 +289,10 @@ class Card(val context: Context, val activity: Activity) {
 
         val temp = ArrayList<String>()
 
-
-        if(mutatedCards != players-1)
-        {
-            var slice = 1.0
-
-            if(songs.size >= 70)
-            {
-                slice = 0.5
-            }
-            else if (songs.size >= 50)
-            {
-                slice = 0.6
-            }
-            else if(songs.size >= 40)
-            {
-                slice = 0.7
-            }
+        if(mutatedCards <= players-1) {
 
 
-            for(i in 0 until (songs.size.toDouble() * slice).roundToInt())
-            {
-                temp.add(songs[i].name)
-            }
-
-
-            when(sub_genre)
-            {
+            when (sub_genre) {
                 "Americana" -> temp.addAll(ArrayList(activity.resources.getStringArray(R.array.americana_wild).toMutableList()))
                 "Bluegrass" -> temp.addAll(ArrayList(activity.resources.getStringArray(R.array.bluegrass_wild).toMutableList()))
                 "Blues" -> temp.addAll(ArrayList(activity.resources.getStringArray(R.array.blues_wild).toMutableList()))
@@ -351,7 +303,7 @@ class Card(val context: Context, val activity: Activity) {
                 "House" -> temp.addAll(ArrayList(activity.resources.getStringArray(R.array.house_wild).toMutableList()))
                 "IDM" -> temp.addAll(ArrayList(activity.resources.getStringArray(R.array.IDM).toMutableList()))
                 "Techno" -> temp.addAll(ArrayList(activity.resources.getStringArray(R.array.techno_wild).toMutableList()))
-                "Christmas" ->temp.addAll(ArrayList(activity.resources.getStringArray(R.array.christmas_wild).toMutableList()))
+                "Christmas" -> temp.addAll(ArrayList(activity.resources.getStringArray(R.array.christmas_wild).toMutableList()))
                 "Halloween" -> temp.addAll(ArrayList(activity.resources.getStringArray(R.array.halloween_wild).toMutableList()))
                 "Charts" -> temp.addAll(ArrayList(activity.resources.getStringArray(R.array.charts_wild).toMutableList()))
                 "Disco" -> temp.addAll(ArrayList(activity.resources.getStringArray(R.array.disco_wild).toMutableList()))
@@ -367,8 +319,35 @@ class Card(val context: Context, val activity: Activity) {
                 "Hard Rock" -> temp.addAll(ArrayList(activity.resources.getStringArray(R.array.hard_wild).toMutableList()))
                 "Pop Punk" -> temp.addAll(ArrayList(activity.resources.getStringArray(R.array.pop_p_wild).toMutableList()))
             }
-            mutatedCards ++
         }
+            mutatedCards ++
+
+        var slice = 1.0
+
+        if (songs.size >= 70)
+        {
+            slice = 0.4
+        }
+        else if(songs.size >= 60)
+        {
+            slice = 0.5
+        }
+        else if (songs.size >= 40)
+        {
+            slice = 0.60
+        }
+        else if(songs.size >= 30)
+        {
+            slice = 0.7
+        }
+
+        for(i in 0 until (songs.size.toDouble() * slice).roundToInt())
+        {
+            Log.i("Adding song",songs[i].name)
+            temp.add(songs[i].name)
+        }
+
+
         temp.shuffle()
 
         return temp
@@ -388,10 +367,10 @@ class Card(val context: Context, val activity: Activity) {
         if (!ONE_LINE) {
 
                 if (played_songs.contains(song1.text) && played_songs.contains(song2.text)
-                        && played_songs.contains(song3.text) && played_songs.contains(song4.text) && (song1_click && song2_click && song3_click && song4_click) ) {
+                        && played_songs.contains(song3.text) && played_songs.contains(song4.text)
+                        && (song1_click && song2_click && song3_click && song4_click) ) {
 
                     ONE_LINE = true
-                    Log.i("FAB", "First line!")
                     response = "ONE"
                     song1.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
                     song2.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
@@ -817,8 +796,25 @@ class Card(val context: Context, val activity: Activity) {
     }
 
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     fun cleanCard()
     {
+        song1.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
+        song2.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
+        song3.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
+        song4.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
+        song5.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
+        song6.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
+        song7.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
+        song8.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
+        song9.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
+        song10.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
+        song11.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
+        song12.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
+        song13.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
+        song14.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
+        song15.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
+        song16.background = activity.resources.getDrawable(R.drawable.green_border_button, activity.resources.newTheme())
         song1.text = ""
         song2.text = ""
         song3.text = ""

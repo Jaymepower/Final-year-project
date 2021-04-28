@@ -1,5 +1,6 @@
 package com.jamie.finalyearproject
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
@@ -8,7 +9,6 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.*
@@ -40,6 +40,7 @@ class Game : AppCompatActivity() {
             val CLIENT_ID: String = "6573a6cbc21f424fad81067b6ce53fd0"
             var song_index = 0
             var user_count = 0
+
             lateinit var username : String
             lateinit var uid : String
             var score = 0
@@ -49,6 +50,11 @@ class Game : AppCompatActivity() {
             var ONE_LINE: Boolean = false
             var TWO_LINES: Boolean = false
             var FULL_HOUSE: Boolean = false
+
+            var bingoLock = false
+            var lockCounter = 30
+
+
             var one_line_status : String = ""
             var two_line_status : String = ""
             var full_house_status : String = ""
@@ -74,6 +80,7 @@ class Game : AppCompatActivity() {
 
 
             lateinit var chatDialog: ChatDialog
+            lateinit var chatBox : Dialog
 
             lateinit var song1: Button;
             lateinit var song2: Button;
@@ -106,6 +113,10 @@ class Game : AppCompatActivity() {
                 react_button = findViewById(R.id.reaction_button)
                 react_button.count = 0
 
+
+                chatDialog = ChatDialog()
+                chatBox = chatDialog.Build(this@Game)
+
                 username = intent.getStringExtra("name").toString()
 
 
@@ -116,6 +127,7 @@ class Game : AppCompatActivity() {
                 preferences = getSharedPreferences("uid", Context.MODE_PRIVATE)
                 uid = preferences.getString("uid", null).toString()
 
+                mediaPlayer = MediaPlayer()
 
 
                 played_songs = ArrayList()
@@ -123,7 +135,6 @@ class Game : AppCompatActivity() {
                 reactions = HashMap()
                 messageButton = findViewById(R.id.chat_button)
 
-                chatDialog = ChatDialog()
 
 
                 lines = AlertDialog.Builder(this, R.style.AlertDialogStyle).create()
@@ -135,10 +146,6 @@ class Game : AppCompatActivity() {
                 session.show()
 
                 card = Card(this@Game, this@Game)
-
-
-
-
 
                 session.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {
                     if(user_count == 0 )
@@ -248,13 +255,18 @@ class Game : AppCompatActivity() {
                         }
 
                         songs.shuffle()
+                        card.printCard(card.generateCard(songs, sub_genre))
                         handleClient()
                     }
 
-                    card.printCard(card.generateCard(songs, sub_genre))
+
+
+
 
 
                 }
+
+
 
 
 
@@ -280,47 +292,44 @@ class Game : AppCompatActivity() {
             the application
              */
 
-            fun playsong(song: Song) {
+            @SuppressLint("SetTextI18n")
+            private fun playsong(song: Song) {
 
                     played_songs.add(song.name)
                     now_playing.text = "${song.name} - ${song.artists}"
                     react = ""
                     runOnUiThread { react_button.count = 0  }
-                    val url = song.preview_url//preview url
-                    if (url != "null") {
-                        val image = song.album_url
-
+                    val image = song.album_url
 
                         GlobalScope.launch {
                             this@Game.runOnUiThread {
                                 Picasso.get()
                                        .load(image)
-                                        .into(album_cover)
-
-                            }
+                                        .into(album_cover) }
 
                             reactions.clear()
 
-                            mediaPlayer = MediaPlayer().apply {
-                                setAudioAttributes(
-                                        AudioAttributes.Builder()
-                                                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                                                .setUsage(AudioAttributes.USAGE_MEDIA)
-                                                .build()
-                                )
-                                //setDataSource(url)
-                                //prepare() // might take long! (for buffering)
-                                //start()
-                                Log.i("Server loading song...", next.toString())
-                                delay(5000)
+
+                                delay(10000)
                                 song_index ++
                                 next = true
-                                // 30 second wait in between songs
+
                             }
 
 
-                        }
-                    }
+                mediaPlayer.reset()
+
+                mediaPlayer.apply {
+                    setAudioAttributes(
+                            AudioAttributes.Builder()
+                                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                                    .build())
+                    setDataSource(song.preview_url)
+                    prepare() // might take long(for buffering)
+                    start() }
+
+
                 }
 
 
@@ -328,53 +337,96 @@ class Game : AppCompatActivity() {
 
                 val winDialog = WinDialog()
 
-
-                when(card.validateCard(played_songs))
+                if(!bingoLock)
                 {
-                    "ONE" -> {
-                        if (!ONE_LINE) {
-                            runOnUiThread { winDialog.build(this@Game,username,"ONE",played_songs.size).show() }
-                            ONE_LINE = true
-                            one_line_status = username
-                            noLines += 1
-                            score += 25
+                    when(card.validateCard(played_songs))
+                    {
+                        "ONE" -> {
+                            if (!ONE_LINE) {
+                                runOnUiThread { winDialog.build(this@Game,username,"ONE",played_songs.size).show() }
+                                ONE_LINE = true
+                                one_line_status = username
+                                noLines += 1
+                                score += 25
+                            }
                         }
-                    }
-                    "TWO" -> {
-                        if (!TWO_LINES) {
-                            winDialog.build(this,username,"TWO",played_songs.size).show()
-                            TWO_LINES = true
-                            two_line_status = username
-                            noLines += 2
-                            score += 50
+                        "TWO" -> {
+                            if (!TWO_LINES) {
+                                winDialog.build(this,username,"TWO",played_songs.size).show()
+                                TWO_LINES = true
+                                two_line_status = username
+                                when(noLines)
+                                {
+                                    0 -> noLines = 2
+                                    1 -> noLines = 1
+                                }
+                                score += 50
+                            }
                         }
-                    }
-                    "FULL" -> {
-                        if (!FULL_HOUSE) {
+                        "FULL" -> {
+                            if (!FULL_HOUSE) {
 
-                            FULL_HOUSE = true
-                            start = false
-                            full_house_status = username
-                            noLines += 4
-                            score += 100
-                            card.cleanCard()
-                            firebaseLog = FirebaseLogger()
-                            firebaseLog.publishDetails(this@Game, noLines, score)
-                            firebaseLog.LogGameDetails(GameLog(uid, genre, sub_genre, played_songs.size,SimpleDateFormat("yyyy-MM-dd").format(Date(System.currentTimeMillis())), noLines, score, reactCount,true))
-                            LeaderboardDialog().endGame(this@Game, one_line_status, two_line_status, full_house_status, noLines, score, reactCount, played_songs.size).show()
+                                FULL_HOUSE = true
+                                start = false
+                                full_house_status = username
+                                noLines += 4
+                                score += 100
+                                card.cleanCard()
+                                firebaseLog = FirebaseLogger()
+                                firebaseLog.publishDetails(this@Game, noLines, score)
+                                firebaseLog.LogGameDetails(GameLog(uid, genre, sub_genre, played_songs.size,SimpleDateFormat("yyyy-MM-dd").format(Date(System.currentTimeMillis())), noLines, score, reactCount,true))
+                                LeaderboardDialog().endGame(this@Game, one_line_status, two_line_status, full_house_status, noLines, score, reactCount, played_songs.size).show()
+                            }
+                        }
+
+                        "None" -> {
+                            lockCounter = 30
+                            val dialog = Dialog(this)
+                            dialog.setContentView(R.layout.false_dialog)
+                            dialog.findViewById<TextView>(R.id.fail_name).text = username
+                            dialog.findViewById<Button>(R.id.fail_button).setOnClickListener {
+                                dialog.dismiss()
+                            }
+                            dialog.show()
+                            bingoLock = true
+                            thread {
+
+                                val mediaPlayer = MediaPlayer.create(
+                                        this,
+                                        R.raw.vinyscratch)
+                                mediaPlayer.setVolume(9.toFloat(),9.toFloat())
+                                mediaPlayer.start()
+
+
+                                while(lockCounter != 0)
+                                {
+                                    lockCounter --
+                                    if (lockCounter == 1)
+                                        bingoLock = false
+
+                                    Thread.sleep(1000)
+                                }
+
+
+                            }
+
+
                         }
                     }
                 }
+                else
+                {
+                    runOnUiThread { Toast.makeText(this@Game,"LOCKED $lockCounter seconds remaining",Toast.LENGTH_SHORT).show() }
+                }
+
+
             }
 
 
-                fun handleClient()
-               {
+                private fun handleClient() {
                    GlobalScope.launch(Dispatchers.IO) {
-
                        users = ArrayList()
                        server = ServerSocket(6000)
-                       Log.i("Server", "Listening on ${server.localPort}")
                        while(true)
                        {
                            if(user_count != 3)
@@ -387,47 +439,32 @@ class Game : AppCompatActivity() {
                                    card.players = user_count
                                    runOnUiThread {  session.setMessage("Devices connected\n                $user_count") }
                                }catch (e : SocketException){}
-
-
                            }
-
-
                        }
-
                    }
                }
 
     // ZfvoIX1UwvHAwmBa
     // redir add tcp:5000:6000
-            fun connect(client: Socket)
+    private fun connect(client: Socket)
             {
                 GlobalScope.launch(Dispatchers.IO) {
-
                     try {
-                        Log.i("Server", "Client Connected")
                         val output = PrintWriter(client.getOutputStream(), true)
                         val input = BufferedReader(InputStreamReader(client.inputStream))
                         val jSong = Gson().toJson(card.generateCard(songs,sub_genre))
-                        Log.i("JSON LIST", "this is the json $jSong")
 
-                        output.println("$genre-$sub_genre") // 1
-
-                        output.println(jSong.toString()) // 2
+                        output.println("$genre-$sub_genre")
+                        output.println(jSong.toString())
 
                         var status = "STATUS_NEUTRAL"
                         var change = "NO_CHANGE"
 
                         while(true)
                         {
-                            /* Manages the timing of the game, when the player is finished next(Global) will become true
-                             which will indicate that the next song is to be played, the playSong method essentially
-                             acts as a timer thread
-                             */
-
                             if(next and start)
                             {
                                 next = false // Resets the next boolean so another song will be played
-
                                 if(song_index < songs.size)
                                 {
                                     val n_song = Gson().toJson(songs[song_index])
@@ -484,7 +521,8 @@ class Game : AppCompatActivity() {
                                 }
                                 else if(!FULL_HOUSE && back.startsWith("FULL"))
                                 {
-                                    val cName = back.substring(3, back.length)
+                                    runOnUiThread { card.cleanCard() }
+                                    val cName = back.substring(4, back.length)
                                     FULL_HOUSE = true
                                     card.FULL_HOUSE = true
                                     full_house_status = cName
@@ -496,7 +534,7 @@ class Game : AppCompatActivity() {
                                     { }
 
                                     firebaseLog.publishDetails(this@Game, noLines, score)
-                                    runOnUiThread { card.cleanCard()
+                                    runOnUiThread {
                                         Runnable{LeaderboardDialog().endGame(this@Game, one_line_status, two_line_status, full_house_status, noLines, score, reactCount, played_songs.size).show() }.run()  }
                                 }
 
@@ -533,12 +571,12 @@ class Game : AppCompatActivity() {
                             }
 
 
-                            var last_message = ""
+                            var lastMessage = ""
                             if(chatDialog.myLog.isNotEmpty())
                             {
-                                last_message = Gson().toJson(chatDialog.myLog[chatDialog.myLog.size - 1])
+                                lastMessage = Gson().toJson(chatDialog.myLog[chatDialog.myLog.size - 1])
                             }
-                            output.println(last_message)
+                            output.println(lastMessage)
 
                             val messagesString = input.readLine()
                             if(messagesString != "")
@@ -546,7 +584,11 @@ class Game : AppCompatActivity() {
                                 val message = Gson().fromJson(messagesString, Message::class.java)
                                 if (!chatDialog.messages.contains(message))
                                 {
-                                    runOnUiThread { messageButton.increase()
+                                    if(!chatBox.isShowing)
+                                    {
+                                        runOnUiThread {  messageButton.increase() }
+                                    }
+                                    runOnUiThread {
                                         chatDialog.notifyChange()
                                     }
                                     chatDialog.messages.add(message)
@@ -577,7 +619,7 @@ class Game : AppCompatActivity() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
         val text = dialog.findViewById<TextView>(R.id.reaction_list)
         val song_title = dialog.findViewById<TextView>(R.id.song_title)
-        song_title.text = songs[0].name
+        song_title.text = songs[song_index].name
         var temp = ""
         for((x, y) in reactions)
         {
@@ -592,13 +634,14 @@ class Game : AppCompatActivity() {
         {
             temp = "Be the first to react!"
         }
-        text.setText(temp)
+        text.text = temp
         val happy = dialog.findViewById<FloatingActionButton>(R.id.happy_button)
         happy.setOnClickListener {
 
             if(reactions.get(username) == null)
             {
                 reactCount ++
+                score += 5
             }
 
             reactions.put(username, "Loves")
@@ -611,6 +654,7 @@ class Game : AppCompatActivity() {
             if(reactions.get(username) == null)
             {
                 reactCount ++
+                score += 5
             }
 
             reactions.put(username, "Hates")
@@ -633,14 +677,14 @@ class Game : AppCompatActivity() {
 
     fun showPopup(v: View)
     {
-       LeaderboardDialog().build(this, one_line_status, two_line_status, full_house_status).show()
+     LeaderboardDialog().build(this, one_line_status, two_line_status, full_house_status,score,noLines).show()
+
     }
 
 
     fun chatBox(v: View)
     {
         runOnUiThread { messageButton.count = 0 }
-        val dialog = chatDialog.Build(this)
         chatDialog.sendButton.setOnClickListener {
             if(chatDialog.text.text.isNotEmpty())
             {
@@ -649,8 +693,12 @@ class Game : AppCompatActivity() {
                 chatDialog.text.setText("")
                 chatDialog.notifyChange()
             }
+            else
+            {
+                chatDialog.text.error = "Message Cannot be empty"
+            }
         }
-        dialog.show()
+        chatBox.show()
 
     }
 

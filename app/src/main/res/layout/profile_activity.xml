@@ -12,9 +12,9 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_pic"
         android:layout_width="240dp"
-        android:layout_height="220dp"
+        android:layout_height="170dp"
         android:layout_marginStart="103dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="103dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,9 +25,9 @@
     <TextView
         android:id="@+id/name_header"
         android:layout_width="125dp"
-        android:layout_height="38dp"
+        android:layout_height="35dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="10dp"
         android:text="Name"
         android:textColor="@color/purple"
         android:textSize="30dp"
@@ -40,7 +40,7 @@
         android:layout_width="317dp"
         android:layout_height="40dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="10dp"
         android:textColor="@color/white"
         android:textSize="25dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +51,7 @@
         android:layout_width="140dp"
         android:layout_height="38dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="10dp"
         android:text="Followers"
         android:textColor="@color/purple"
         android:textSize="30dp"
@@ -60,11 +60,37 @@
         app:layout_constraintTop_toBottomOf="@+id/profile_country" />
 
     <TextView
+        android:id="@+id/name_header5"
+        android:layout_width="140dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="10dp"
+        android:text="Lines"
+        android:textColor="@color/purple"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_followers" />
+
+    <TextView
+        android:id="@+id/name_header6"
+        android:layout_width="140dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="10dp"
+        android:text="Score"
+        android:textColor="@color/purple"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_lines" />
+
+    <TextView
         android:id="@+id/name_header3"
         android:layout_width="125dp"
         android:layout_height="38dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="10dp"
         android:text="Country"
         android:textColor="@color/purple"
         android:textSize="30dp"
@@ -75,20 +101,42 @@
     <TextView
         android:id="@+id/profile_followers"
         android:layout_width="317dp"
-        android:layout_height="40dp"
+        android:layout_height="30dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="10dp"
         android:textColor="@color/white"
         android:textSize="25dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name_header4" />
 
     <TextView
+        android:id="@+id/profile_lines"
+        android:layout_width="317dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/white"
+        android:textSize="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_header5" />
+
+    <TextView
+        android:id="@+id/profile_score"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/white"
+        android:textSize="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_header6" />
+
+    <TextView
         android:id="@+id/name_header2"
         android:layout_width="125dp"
-        android:layout_height="38dp"
+        android:layout_height="35dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="10dp"
         android:text="Email"
         android:textColor="@color/purple"
         android:textSize="30dp"
@@ -99,9 +147,9 @@
     <TextView
         android:id="@+id/profile_name"
         android:layout_width="317dp"
-        android:layout_height="40dp"
+        android:layout_height="30dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="10dp"
         android:textColor="@color/white"
         android:textSize="25dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -110,9 +158,9 @@
     <TextView
         android:id="@+id/profile_email"
         android:layout_width="317dp"
-        android:layout_height="40dp"
+        android:layout_height="30dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="10dp"
         android:textColor="@color/white"
         android:textSize="25dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -120,14 +168,14 @@
 
     <Button
         android:id="@+id/button3"
-        android:layout_width="98dp"
-        android:layout_height="48dp"
+        android:layout_width="110dp"
+        android:layout_height="44dp"
         android:layout_marginEnd="23dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/round_button"
+        android:onClick="showLog"
         android:paddingRight="20sp"
         android:text="History"
-        android:onClick="showLog"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

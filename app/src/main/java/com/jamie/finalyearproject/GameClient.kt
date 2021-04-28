@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -61,6 +62,9 @@ class GameClient : AppCompatActivity()
     lateinit var react_button : CounterFab
     lateinit var messageButton : CounterFab
 
+    var bingoLock = false
+    var lockCounter = 30
+
 
     lateinit var song1: Button;
     lateinit var song2: Button;
@@ -85,6 +89,8 @@ class GameClient : AppCompatActivity()
 
 
     lateinit var chatDialog: ChatDialog
+    lateinit var chatBox : Dialog
+
     lateinit var firebaseLogger: FirebaseLogger
 
     private lateinit var song_list: ArrayList<String>
@@ -102,10 +108,20 @@ class GameClient : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.game_activity)
 
-        //username = intent.getStringExtra("name").toString()
+
         username = "Other user"
 
-        connect()
+
+        song1 = findViewById(R.id.song_1);song2 = findViewById(R.id.song_2);song3 = findViewById(R.id.song_3);song4 = findViewById(R.id.song_4); song5 = findViewById(R.id.song_5); song6 = findViewById(R.id.song_6)
+        song7 = findViewById(R.id.song_7); song8 = findViewById(R.id.song_8);song9 = findViewById(R.id.song_9);song10 = findViewById(R.id.song_10);song11 = findViewById(R.id.song_11);song12 = findViewById(R.id.song_12)
+        song13 = findViewById(R.id.song_13);song14 = findViewById(R.id.song_14);song15 = findViewById(R.id.song_15);song16 = findViewById(R.id.song_16)
+
+        card = Card(this,this@GameClient)
+
+
+        chatDialog = ChatDialog()
+        chatBox = chatDialog.Build(this@GameClient)
+
 
         val preferences = getSharedPreferences("uid",Context.MODE_PRIVATE)
         uid = preferences.getString("uid",null).toString()
@@ -125,13 +141,11 @@ class GameClient : AppCompatActivity()
         messageButton = findViewById(R.id.chat_button)
         react_button.count = 0
 
-        chatDialog = ChatDialog()
+
         leaderboard = findViewById(R.id.popup_button)
         leaderboard.setOnClickListener{
-            LeaderboardDialog().build(this,one_line_status,two_line_status,full_house_status).show()
+            LeaderboardDialog().build(this,one_line_status,two_line_status,full_house_status,score,noLines).show()
         }
-
-
 
 
 
@@ -140,15 +154,12 @@ class GameClient : AppCompatActivity()
             dialog.show()
         }
 
-        card = Card(this,this@GameClient)
 
 
-
-        song1 = findViewById(R.id.song_1);song2 = findViewById(R.id.song_2);song3 = findViewById(R.id.song_3);song4 = findViewById(R.id.song_4); song5 = findViewById(R.id.song_5); song6 = findViewById(R.id.song_6)
-        song7 = findViewById(R.id.song_7); song8 = findViewById(R.id.song_8);song9 = findViewById(R.id.song_9);song10 = findViewById(R.id.song_10);song11 = findViewById(R.id.song_11);song12 = findViewById(R.id.song_12)
-        song13 = findViewById(R.id.song_13);song14 = findViewById(R.id.song_14);song15 = findViewById(R.id.song_15);song16 = findViewById(R.id.song_16)
-
-
+        thread {
+            Thread.sleep(1000)
+            connect()
+        }
 
     }
 
@@ -318,7 +329,11 @@ class GameClient : AppCompatActivity()
                         val message = Gson().fromJson(messagesString,Message::class.java)
                         if (!chatDialog.messages.contains(message))
                         {
-                            runOnUiThread { messageButton.increase()
+                            if(!chatBox.isShowing)
+                            {
+                                runOnUiThread {  messageButton.increase()}
+                            }
+                            runOnUiThread {
                                 chatDialog.notifyChange()
                             }
                             chatDialog.messages.add(message)
@@ -378,46 +393,86 @@ class GameClient : AppCompatActivity()
 
         val winDialog = WinDialog()
 
-        when(card.validateCard(played_songs))
+        if(!bingoLock)
         {
-            "ONE" -> {
-                if(!ONE_LINE)
-                {
-                    winDialog.build(this@GameClient,username,"ONE",played_songs.size).show()
-                    ONE_LINE = true
-                    mONE_LINE = true
-                    one_line_status = username
-                    noLines += 1
-                    score += 25
+            when(card.validateCard(played_songs))
+            {
+                "ONE" -> {
+                    if(!ONE_LINE)
+                    {
+                        ONE_LINE = true
+                        mONE_LINE = true
+                        one_line_status = username
+                        noLines += 1
+                        score += 25
+                        winDialog.build(this@GameClient,username,"ONE",played_songs.size).show()
+                    }
                 }
-            }
-            "TWO" -> {
-                if(!TWO_LINES)
-                {
-                    winDialog.build(this@GameClient,username,"TWO",played_songs.size).show()
-                    TWO_LINES = true
-                    mTWO_LINES = true
-                    two_line_status = username
-                    noLines += 2
-                    score += 50
+                "TWO" -> {
+                    if(!TWO_LINES)
+                    {
+
+                        TWO_LINES = true
+                        mTWO_LINES = true
+                        two_line_status = username
+                        when(noLines)
+                        {
+                            0 -> noLines = 2
+                            1 -> noLines = 1
+                        }
+                        score += 50
+                        winDialog.build(this@GameClient,username,"TWO",played_songs.size).show()
+                    }
                 }
-            }
-            "FULL" -> {
-                if(!FULL_HOUSE)
-                {
-                    FULL_HOUSE = true
-                    mFULL_HOUSE = true
-                    full_house_status = username
-                    noLines += 4
-                    score += 100
-                    firebaseLogger = FirebaseLogger()
-                    firebaseLogger.publishDetails(this@GameClient, noLines,score)
-                    firebaseLogger.LogGameDetails(GameLog(uid,genre,subGenre,played_songs.size,Calendar.DATE.toString(),noLines,score,reactCount,true))
-                    LeaderboardDialog().endGame(this@GameClient,one_line_status,two_line_status,full_house_status,noLines,score,reactCount,played_songs.size).show()
+                "FULL" -> {
+                    if(!FULL_HOUSE)
+                    {
+                        FULL_HOUSE = true
+                        mFULL_HOUSE = true
+                        full_house_status = username
+                        noLines += 4
+                        score += 100
+                        firebaseLogger = FirebaseLogger()
+                        firebaseLogger.publishDetails(this@GameClient, noLines,score)
+                        firebaseLogger.LogGameDetails(GameLog(uid,genre,subGenre,played_songs.size,Calendar.DATE.toString(),noLines,score,reactCount,true))
+                        LeaderboardDialog().endGame(this@GameClient,one_line_status,two_line_status,full_house_status,noLines,score,reactCount,played_songs.size).show()
+
+                    }
+                }
+                "None"-> {
+                    val mediaPlayer = MediaPlayer.create(
+                            this,
+                            R.raw.vinyscratch)
+                    mediaPlayer.start()
+                    lockCounter = 30
+                    val dialog = Dialog(this)
+                    dialog.setContentView(R.layout.false_dialog)
+                    dialog.findViewById<TextView>(R.id.fail_name).text = username
+                    dialog.findViewById<Button>(R.id.fail_button).setOnClickListener {
+                        dialog.dismiss()
+                    }
+                    dialog.show()
+                    bingoLock = true
+                    thread {
+                        while(lockCounter != 0)
+                        {
+                            lockCounter --
+                            if (lockCounter == 1)
+                                bingoLock = false
+                            Thread.sleep(1000)
+                        }
+
+                    }
 
                 }
             }
+        }else
+        {
+            runOnUiThread { Toast.makeText(this@GameClient,"LOCKED $lockCounter seconds remaining",Toast.LENGTH_SHORT).show() }
         }
+
+
+
     }
 
     override fun onBackPressed() {
@@ -464,22 +519,24 @@ class GameClient : AppCompatActivity()
         happy.setOnClickListener {
 
 
-            if(reactions.get(username) == null)
+            if(reactions[username] == null)
             {
                 reactCount ++
+                score += 5
             }
 
 
-            reactions.put(username,"Loves")
+            reactions[username] = "Loves"
             react_content = "$username+HAPPY"
             dialog.dismiss()
         }
         val bored = dialog.findViewById<FloatingActionButton>(R.id.bored_button)
         bored.setOnClickListener {
 
-            if(reactions.get(username) == null)
+            if(reactions[username] == null)
             {
                 reactCount ++
+                score += 5
             }
 
             reactions.put(username,"Hates")
@@ -507,9 +564,11 @@ class GameClient : AppCompatActivity()
 
     override fun onStop() {
         try {
-            socket.close()
-            output.close()
-            input.close()
+            GlobalScope.launch (Dispatchers.IO){
+                socket.close()
+                output.close()
+                input.close()
+            }
         }catch (e : IOException){}
 
         finish()
@@ -520,7 +579,6 @@ class GameClient : AppCompatActivity()
     fun chatBox(v : View)
     {
         runOnUiThread { messageButton.count = 0 }
-        val dialog = chatDialog.Build(this)
 
         chatDialog.sendButton.setOnClickListener {
             if(chatDialog.text.text.isNotEmpty())
@@ -532,7 +590,7 @@ class GameClient : AppCompatActivity()
             }
 
         }
-        dialog.show()
+        chatBox.show()
 
     }
 }

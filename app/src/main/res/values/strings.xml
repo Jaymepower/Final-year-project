@@ -266,13 +266,17 @@
     </string>
 
     <string name="winning_desc">
-        There are 3 stages of the game, the first line, two lines and a full house
+        There are 3 stages of the game, the first line, two lines and a full house.
+        \n
         \n
         First Line : Any 4 songs that are positioned vertically across on any line
         \n
+        \n
         Two Lines : Any 8 songs that make up two vertical lines
         \n
+        \n
         Full House : By marking every song on the card you win the game!
+        \n
         \n
         In order to check lines or to "bingo!" , press the red button to validate your lines,
         if the songs have been played the buttons will turn green verifying your claim
@@ -304,7 +308,16 @@
     </string>
 
 
+    <string name="false_claim">
+       You have made a false bingo claim! remember to examine the played songs to avoid false claims
+    </string>
 
+
+    <string name="endgame">
+       Once a player has finished their card and made a final claim, that player will win
+        the game and the session concludes, clicking the end game button will conclude the
+        session and return you to the homepage
+    </string>
 
 
 

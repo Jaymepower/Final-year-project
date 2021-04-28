@@ -45,7 +45,7 @@ class HistoryAdapter(val gameLog : ArrayList<GameLog>) : RecyclerView.Adapter<Hi
             date.text = log.date
             reacts.text = log.reactions.toString()
             line.text = log.lines.toString()
-            score.text = log.lines.toString()
+            score.text = log.score.toString()
 
             if (log.win)
             {

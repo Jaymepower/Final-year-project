@@ -16,17 +16,22 @@ class LeaderboardDialog
 {
 
     @SuppressLint("SetTextI18n")
-    fun build(context : Context, first : String, two : String, winner : String) : Dialog
+    fun build(context : Context, first : String, two : String, winner : String, score : Int , lines : Int) : Dialog
     {
         val dialog = Dialog(context)
         dialog.setCancelable(true)
         dialog.setContentView(R.layout.leaderboard_dialog)
 
 
-
         val first_field = dialog.findViewById<TextView>(R.id.first_line_field)
         val second_field = dialog.findViewById<TextView>(R.id.two_line_field)
         val win_field = dialog.findViewById<TextView>(R.id.winner_field)
+
+        val line_field = dialog.findViewById<TextView>(R.id.leader_line)
+        line_field.text = lines.toString()
+
+        val score_field = dialog.findViewById<TextView>(R.id.leader_score)
+        score_field.text = score.toString()
 
         val status = dialog.findViewById<TextView>(R.id.game_status)
 

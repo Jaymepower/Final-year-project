@@ -1,5 +1,6 @@
 package com.jamie.finalyearproject
 
+import android.app.Dialog
 import android.content.Intent
 import android.media.Image
 import android.os.Bundle
@@ -17,12 +18,6 @@ import org.jetbrains.anko.find
 
 
 class Store : AppCompatActivity(), PurchasesUpdatedListener {
-
-    private val purchasesUpdatedListener =
-            PurchasesUpdatedListener { billingResult, purchases ->
-                // To be implemented in a later section.
-            }
-
 
 
     lateinit var id : String
@@ -54,6 +49,9 @@ class Store : AppCompatActivity(), PurchasesUpdatedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.store_layout)
+
+        val dialog = Dialog(this)
+        dialog.show()
 
         id = intent.getStringExtra("uid").toString()
 
@@ -113,6 +111,8 @@ class Store : AppCompatActivity(), PurchasesUpdatedListener {
                           rapButton.background = resources.getDrawable(R.drawable.spotifybutton)
                           rapIcon.setImageDrawable(resources.getDrawable(R.drawable.ic_check))
                       }
+
+                      dialog.dismiss()
 
                   }
 

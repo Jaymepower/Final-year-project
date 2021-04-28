@@ -30,6 +30,7 @@ class Profile : AppCompatActivity() {
 
     lateinit var username_field : TextView ; lateinit var email_field : TextView
     lateinit var country_field : TextView ; lateinit var follower_field : TextView
+    lateinit var scoreField : TextView ; lateinit var lineField : TextView
 
     lateinit var profile_pic : ImageView
     lateinit var progress : Dialog
@@ -37,6 +38,7 @@ class Profile : AppCompatActivity() {
 
     lateinit var id : String
     lateinit var logRef : DatabaseReference
+    lateinit var userRef : DatabaseReference
     lateinit var games : ArrayList<GameLog>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,16 +50,29 @@ class Profile : AppCompatActivity() {
         progress.setContentView(R.layout.loading_dialog)
         progress.show()
 
-        access_token = intent.getStringExtra("token").toString()
+
+
+        val uidPref = getSharedPreferences("uid", Context.MODE_PRIVATE)
+        id = uidPref.getString("uid",null).toString()
+
+
+        val preferences = getSharedPreferences("bearerToken", Context.MODE_PRIVATE)
+        access_token = preferences.getString("token", null).toString()
 
         profile_pic = findViewById(R.id.profile_pic)
         username_field = findViewById(R.id.profile_name)
         email_field = findViewById(R.id.profile_email)
         country_field = findViewById(R.id.profile_country)
         follower_field = findViewById(R.id.profile_followers)
+        scoreField = findViewById(R.id.profile_score)
+        lineField = findViewById(R.id.profile_lines)
+
+
 
 
         logRef = FirebaseDatabase.getInstance().getReference("Log")
+
+        userRef = FirebaseDatabase.getInstance().getReference("Users")
 
         games = ArrayList<GameLog>()
 
@@ -115,13 +130,43 @@ class Profile : AppCompatActivity() {
                         //do smth when there is picture loading error
                     }
                 })
+            }
+        }
 
 
 
+
+
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener{
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for(snap in snapshot.children)
+                {
+                    val uid = snap.child("user_id").value.toString()
+
+                    if(uid == id)
+                    {
+                        val score = snap.child("score").value.toString()
+                        val lines = snap.child("lines").value.toString()
+
+                        scoreField.text = score
+                        lineField.text = lines
+
+                    }
+
+
+                }
             }
 
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
 
-        }
+
+
+
+
 
 
 
@@ -133,10 +178,6 @@ class Profile : AppCompatActivity() {
     {
 
         progress.show()
-        val uidPref = getSharedPreferences("uid", Context.MODE_PRIVATE)
-        id = uidPref.getString("uid",null).toString()
-
-
 
         logRef.addListenerForSingleValueEvent(object : ValueEventListener {
 
@@ -147,7 +188,7 @@ class Profile : AppCompatActivity() {
                     val uid = snap.child("user_id").value.toString()
                     Log.i("Profile",uid)
 
-                    if(1 == 1) {
+                    if(true) {
 
                         val genre = snap.child("genre").value.toString()
                         val subgenre = snap.child("subgenre").value.toString()
