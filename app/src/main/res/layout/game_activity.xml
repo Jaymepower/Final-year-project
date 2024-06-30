@@ -204,7 +204,7 @@
         android:paddingLeft="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/musicbingo" />
+        app:srcCompat="@drawable/MusicBingo" />
 
     <TextView
         android:id="@+id/now_playing"
