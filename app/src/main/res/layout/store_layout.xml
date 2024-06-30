@@ -27,7 +27,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="54dp"
         android:background="@drawable/round_button"
-        android:onClick="BuyRock"
+        android:onClick="buyRockPlaylist"
         android:paddingRight="12dp"
         android:text="Rock"
         android:textAlignment="center"

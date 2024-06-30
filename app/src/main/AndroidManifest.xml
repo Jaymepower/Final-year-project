@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.jamie.finalyearproject">
+    package="com.jamie.musicbingo">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="com.android.vending.BILLING" />
@@ -14,80 +14,80 @@
         android:theme="@style/Theme.AppCompat.NoActionBar">
 
 
-        <activity android:name="com.jamie.finalyearproject.MainActivity">
+        <activity android:name="com.jamie.musicbingo.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.jamie.finalyearproject.OptionsActivity">
+        <activity android:name="com.jamie.musicbingo.activities.OptionsActivity">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.jamie.finalyearproject.Profile">
+        <activity android:name="com.jamie.musicbingo.Profile">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.jamie.finalyearproject.Hostactivity">
+        <activity android:name="com.jamie.musicbingo.activities.HostActivity">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.jamie.finalyearproject.Game" android:screenOrientation="landscape" android:launchMode="singleTask">
+        <activity android:name="com.jamie.musicbingo.Game" android:screenOrientation="landscape" android:launchMode="singleTask">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.jamie.finalyearproject.GameClient" android:screenOrientation="landscape" >
+        <activity android:name="com.jamie.musicbingo.GameClient" android:screenOrientation="landscape" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.jamie.finalyearproject.JoinActvity" >
+        <activity android:name="com.jamie.musicbingo.activities.JoinActvity" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.jamie.finalyearproject.HowTo" >
+        <activity android:name="com.jamie.musicbingo.HowTo" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.jamie.finalyearproject.Store" >
+        <activity android:name="com.jamie.musicbingo.Store" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.jamie.finalyearproject.Insights" >
+        <activity android:name="com.jamie.musicbingo.Insights" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.jamie.finalyearproject.GenreList" >
+        <activity android:name="com.jamie.musicbingo.GenreList" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.jamie.finalyearproject.SubGenreList" >
+        <activity android:name="com.jamie.musicbingo.SubGenreList" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.jamie.finalyearproject.Catalog" >
+        <activity android:name="com.jamie.musicbingo.Catalog" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
